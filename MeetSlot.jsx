@@ -822,7 +822,7 @@ export default function MeetSlot() {
   function buildAskText() {
     if (!dayLabel || aSlot == null) return "";
     const month = dayLabel.dateObj.getMonth() + 1;
-    const dateStr = `${month}월 ${dayLabel.date}일 ${dayLabel.label}요일`;
+    const dateStr = `${month}월 ${dayLabel.date}일(${dayLabel.label})`;
     // 시간: 시작·끝이 같은 오전/오후면 끝 시간엔 오전/오후 생략
     const start = aSlot, end = aSlot + durMin;
     const startAp = Math.floor(start / 60) < 12 ? "오전" : "오후";
@@ -830,11 +830,9 @@ export default function MeetSlot() {
     let eh = Math.floor(end / 60) % 12; if (eh === 0) eh = 12;
     const endStr = endAp === startAp ? `${eh}:${String(end % 60).padStart(2, "0")}` : slotLabel(end);
     return [
-      "회의 시간을 맞춰보고 있어요. 아래 시간 괜찮으실까요?",
-      "",
+      "회의 일정을 조율하고 있어요. 아래 시간 괜찮으실까요?",
       `${dateStr} ${slotLabel(start)}–${endStr}`,
-      "",
-      "어려우시면 편하게 말씀해 주세요.",
+      "어려우시면 편하게 말씀해주세요.",
     ].join("\n");
   }
   function openAsk() {
