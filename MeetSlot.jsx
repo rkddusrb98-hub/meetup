@@ -1433,7 +1433,7 @@ export default function MeetSlot() {
                   <span style={s.dSubText}>{(() => {
                     if (active.status !== "check") return STATUS_HINT[active.status];
                     const focusIds = options.relaxPref ? [] : [...new Set([...active.prefConflicts, ...active.fieldwork])];
-                    if (focusIds.length) return `${focusIds.map(nameOf).join(", ")}님이 이 시간을 회의를 피하고 싶은 시간으로 설정했어요.`;
+                    if (focusIds.length) return `${focusIds.map(nameOf).join(", ")}님이 이 시간을 회의를 피하고 싶은 시간으로 설정했어요`;
                     if (active.busyOptional.length) return `${active.busyOptional.map(nameOf).join(", ")}님은 다른 일정이 있어 못 올 수 있어요`;
                     return STATUS_HINT.check;
                   })()}</span>
