@@ -1699,10 +1699,10 @@ input:focus, select:focus { border-color: #3182F6 !important; box-shadow: inset 
 /* 캘린더 스크롤: 스크롤바가 레이아웃 공간을 예약하지 않게(좌우 패딩 대칭) — 스크롤은 그대로 동작 */
 .cal-scroll { scrollbar-width: none; }
 .cal-scroll::-webkit-scrollbar { width: 0; height: 0; }
-/* 입력 필드: 평소 기본 회색, hover 시 파란 외곽선 50% 투명, focus(클릭) 시 파란 외곽선 */
-.field { border-color: #E5E8EB; transition: border-color .15s ease; }
-.field:hover:not(:focus) { border-color: rgba(49,130,246,0.5); }
-.field:focus { border-color: #3182F6; }
+/* 입력 필드: 평소 기본 회색 1px, hover 파란 50%(굵기↑), focus 파란(hover와 동일 굵기). 모든 필드 동일 값 */
+.field { border-width: 1px; border-color: #E5E8EB; transition: border-color .15s ease; }
+.field:hover:not(:focus) { border-width: 1.5px; border-color: rgba(49,130,246,0.5); }
+.field:focus { border-width: 1.5px; border-color: #3182F6; }
 /* 우측 추천 패널: 네이티브 스크롤바는 공간을 안 먹게 숨기고(좌우 패딩 대칭 유지), 커스텀 오버레이 thumb를 위에 얹는다 */
 .mss.mss-noscroll::-webkit-scrollbar { width: 0; height: 0; }
 .mss.mss-noscroll { scrollbar-width: none; }
@@ -1764,7 +1764,7 @@ const s = {
   formTop: { display: "flex", flexDirection: "column", gap: 16, width: "100%" },
   inputWrap: { position: "relative", width: "100%" },
   clearBtn: { position: "absolute", right: 15, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, borderRadius: "50%", background: "#8B95A1", display: "flex", alignItems: "center", justifyContent: "center", border: "none", cursor: "pointer", padding: 0, flexShrink: 0 },
-  input: { width: "100%", height: 46, borderWidth: 1, borderStyle: "solid", borderRadius: 12, padding: "0 15px", fontSize: 13, letterSpacing: -0.26, background: T.white, color: T.gray700, fontWeight: 500, boxSizing: "border-box", outline: "none" },
+  input: { width: "100%", height: 46, borderStyle: "solid", borderRadius: 12, padding: "0 15px", fontSize: 13, letterSpacing: -0.26, background: T.white, color: T.gray700, fontWeight: 500, boxSizing: "border-box", outline: "none" },
   inputWarn: { borderColor: "#F04452" },
   titleWarnMsg: { padding: "0 4px", fontFamily: FONT, fontSize: 12, fontWeight: 500, lineHeight: "14px", letterSpacing: -0.24, color: "#F04452" },
   fieldRow: { display: "flex", gap: 10 },
@@ -1797,7 +1797,7 @@ const s = {
   partFields: { display: "flex", flexDirection: "column", gap: 8, width: "100%" },
   searchWrap: { position: "relative", width: "100%" },
   searchIcon: { position: "absolute", left: 15, top: "50%", transform: "translateY(-50%)", display: "inline-flex" },
-  searchInput: { width: "100%", height: 46, borderWidth: 1, borderStyle: "solid", borderRadius: 12, padding: "0 15px 0 37px", fontSize: 14, letterSpacing: -0.28, background: T.white, color: T.gray700, fontWeight: 500, boxSizing: "border-box", outline: "none" },
+  searchInput: { width: "100%", height: 46, borderStyle: "solid", borderRadius: 12, padding: "0 15px 0 37px", fontSize: 14, letterSpacing: -0.28, background: T.white, color: T.gray700, fontWeight: 500, boxSizing: "border-box", outline: "none" },
   deptWrap: { position: "relative", width: "100%" },
   deptTrigger: { width: "100%", height: 46, borderWidth: 1, borderStyle: "solid", borderColor: "#E5E8EB", borderRadius: 12, padding: "0 15px", fontSize: 14, letterSpacing: -0.28, background: T.white, color: T.gray700, fontWeight: 500, cursor: "pointer", outline: "none", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left" },
   deptMenu: { position: "absolute", top: 50, left: 0, width: "100%", background: T.white, borderRadius: 10, padding: 4, boxShadow: "0 2px 5px rgba(52,59,87,0.16)", zIndex: 41, display: "flex", flexDirection: "column", gap: 4, boxSizing: "border-box" },
@@ -1983,7 +1983,7 @@ const s = {
   infoFields: { display: "flex", flexDirection: "column", gap: 16, width: "100%" },
   infoField: { display: "flex", flexDirection: "column", gap: 6, width: "100%" },
   infoLabel: { fontSize: 13, fontWeight: 500, lineHeight: "18px", letterSpacing: -0.26, color: "#333D4B", padding: "0 2px" },
-  memoInput: { width: "100%", height: 80, borderWidth: 1, borderStyle: "solid", borderRadius: 12, padding: "15px", fontSize: 13, letterSpacing: -0.26, color: T.gray700, fontWeight: 500, fontFamily: FONT, resize: "none", outline: "none", boxSizing: "border-box", lineHeight: "16px" },
+  memoInput: { width: "100%", height: 80, borderStyle: "solid", borderRadius: 12, padding: "15px", fontSize: 13, letterSpacing: -0.26, color: T.gray700, fontWeight: 500, fontFamily: FONT, resize: "none", outline: "none", boxSizing: "border-box", lineHeight: "16px" },
   // 동료에게 물어보기 모달
   modalBackdrop: { position: "fixed", inset: 0, background: "rgba(25,31,40,0.45)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, zIndex: 1000 },
   modalCard: { width: 380, maxWidth: "100%", maxHeight: "86vh", overflowY: "auto", background: T.white, borderRadius: 20, padding: 24, display: "flex", flexDirection: "column", gap: 18, boxSizing: "border-box", boxShadow: "0 12px 48px rgba(25,31,40,0.24)" },
@@ -2000,7 +2000,7 @@ const s = {
   askName: { flex: 1, minWidth: 0, fontWeight: 600, fontSize: 13, letterSpacing: -0.26, color: "#333D4B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
   askCheck: { width: 18, height: 18, borderRadius: 6, borderWidth: 2, borderStyle: "solid", borderColor: T.gray300, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
   askCheckOn: { background: T.blue, borderColor: T.blue },
-  askTextarea: { width: "100%", height: 128, borderWidth: 1, borderStyle: "solid", borderRadius: 12, padding: "13px 15px", fontSize: 13, letterSpacing: -0.26, color: T.gray700, fontWeight: 500, fontFamily: FONT, resize: "none", outline: "none", boxSizing: "border-box", lineHeight: "20px" },
+  askTextarea: { width: "100%", height: 128, borderStyle: "solid", borderRadius: 12, padding: "13px 15px", fontSize: 13, letterSpacing: -0.26, color: T.gray700, fontWeight: 500, fontFamily: FONT, resize: "none", outline: "none", boxSizing: "border-box", lineHeight: "20px" },
   askToast: { position: "fixed", top: 20, left: "50%", transform: "translateX(-50%)", zIndex: 2000, display: "flex", alignItems: "center", gap: 8, background: T.white, padding: 14, borderRadius: 100, boxShadow: "0 4px 10px rgba(176,184,193,0.34)", whiteSpace: "nowrap", animation: "toastDrop .42s cubic-bezier(.16,.84,.34,1.12) both" },
   askToastIcon: { width: 20, height: 20, borderRadius: 10, background: "#00C478", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
   askToastText: { fontSize: 15, fontWeight: 600, lineHeight: "18px", letterSpacing: -0.32, color: "#333D4B" },
