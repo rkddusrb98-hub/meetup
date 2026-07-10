@@ -462,7 +462,7 @@ function computeRecos(days, durMin, participants, options) {
       const t = recoTierOf(ev, participants, options);
       if (!t) continue;
       const bs = slotBufferSides(d.key, s, s + durMin, participants);
-      cands.push({ dayKey: d.key, di, start: s, end: s + durMin, buffer: bs.before + bs.after, ...t });
+      cands.push({ dayKey: d.key, di, start: s, end: s + durMin, bufMin: Math.min(bs.before, bs.after), ...t });
     }
   });
   if (!cands.length) return { level: "none", picks: [] };
@@ -474,10 +474,16 @@ function computeRecos(days, durMin, participants, options) {
     if (picks.length >= 3) break;
     if (pickSeparated(c, picks)) picks.push(c);
   }
-  // 티어1(전부 가능)이 여러 개면 타이틀 각도 배정: 첫 픽=가장 빠름, 나머지 중 앞뒤 여유 큰 것=여유, 그 외=대안
-  picks.forEach((p, i) => { p.kind = i === 0 ? "fast" : "alt"; });
-  const restReady = picks.slice(1).filter((p) => p.tier === 1).sort((a, b) => b.buffer - a.buffer);
-  if (restReady[0]) restReady[0].kind = "relaxed";
+  // 티어1(전부 가능) 여러 개면 각도별 이유 배정: 첫 픽=가장 빠름, 나머지는 구체 이유
+  picks.forEach((p, i) => {
+    if (i === 0) { p.kind = "fast"; return; }
+    if (p.tier !== 1) { p.kind = "status"; return; }
+    // 기본 이유: 회의실 넉넉 > 시간대
+    p.kind = p.roomsN >= 3 ? "rooms" : (p.start < 720 ? "morning" : "afternoon");
+  });
+  // 나머지 가능 픽 중 '앞뒤 양쪽' 여유가 가장 큰 것(30분+)만 '여유' 이유로
+  const restReady = picks.slice(1).filter((p) => p.tier === 1).sort((a, b) => b.bufMin - a.bufMin);
+  if (restReady[0] && restReady[0].bufMin >= 30) restReady[0].kind = "relaxed";
   return { level: "ok", picks };
 }
 
@@ -510,9 +516,11 @@ function recoReason(p) {
   if (p.tier === 2) return "일부 참석자 확인이 필요해요";
   if (p.tier === 3) return "회의실만 조정하면 가능해요";
   if (p.tier === 4) return "필수 참석자 확인이 필요해요";
-  // 티어1(전부 가능)이 여러 개면 각도로 구분: 빠름 / 여유 / 대안
+  // 티어1(전부 가능)이 여러 개면 각도별 구체 이유
   if (p.kind === "relaxed") return "앞뒤로 여유로운 시간이에요";
-  if (p.kind === "alt") return "이 시간도 잡기 좋아요";
+  if (p.kind === "rooms") return "회의실 선택지가 많아요";
+  if (p.kind === "morning") return "오전이라 집중하기 좋아요";
+  if (p.kind === "afternoon") return "오후에 잡기 좋아요";
   return "가장 빠른 시간이에요";
 }
 // 추천 카드 보조 설명: 실제 조건을 구체적으로
@@ -1705,10 +1713,10 @@ input:focus, select:focus { border-color: #3182F6 !important; box-shadow: inset 
 /* 캘린더 스크롤: 스크롤바가 레이아웃 공간을 예약하지 않게(좌우 패딩 대칭) — 스크롤은 그대로 동작 */
 .cal-scroll { scrollbar-width: none; }
 .cal-scroll::-webkit-scrollbar { width: 0; height: 0; }
-/* 입력 필드: 굵기 1px 고정(텍스트 안 밀림), 색만 변함 — 평소 회색, hover 파란 50%, focus 파란. 모든 필드 동일 */
-.field { border-width: 1px; border-color: #E5E8EB; transition: border-color .15s ease; }
-.field:hover:not(:focus) { border-color: rgba(49,130,246,0.5); }
-.field:focus { border-color: #3182F6; }
+/* 입력 필드: 굵기 1px 고정(텍스트 안 밀림). hover·focus는 box-shadow 링으로 동일하게 더 두껍게 보이게 — 평소 회색, hover 파란 50%, focus 파란. 모든 필드 동일 */
+.field { border-width: 1px; border-color: #E5E8EB; transition: border-color .15s ease, box-shadow .15s ease; }
+.field:hover:not(:focus) { border-color: rgba(49,130,246,0.5); box-shadow: 0 0 0 1px rgba(49,130,246,0.5); }
+.field:focus { border-color: #3182F6; box-shadow: 0 0 0 1px #3182F6; }
 /* 우측 추천 패널: 네이티브 스크롤바는 공간을 안 먹게 숨기고(좌우 패딩 대칭 유지), 커스텀 오버레이 thumb를 위에 얹는다 */
 .mss.mss-noscroll::-webkit-scrollbar { width: 0; height: 0; }
 .mss.mss-noscroll { scrollbar-width: none; }
