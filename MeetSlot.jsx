@@ -1354,7 +1354,7 @@ export default function MeetSlot() {
                           <div style={s.roomList}>
                             {active.roomsFree.map((r) => (
                               <button key={r.id} onClick={() => setPickedRoom(r.id)}
-                                style={{ ...s.roomRow, borderColor: pickedRoom === r.id ? T.blue : "#E5E8EB", background: T.white }}>
+                                style={{ ...s.roomRow, borderColor: pickedRoom === r.id ? T.blue : "#E5E8EB", boxShadow: pickedRoom === r.id ? `inset 0 0 0 1px ${T.blue}` : "none", background: T.white }}>
                                 <span style={s.roomThumb}>{r.img && <img src={r.img} alt="" onError={(e) => { e.currentTarget.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}</span>
                                 <span style={s.roomInfo}>
                                   <span style={s.roomNameRow}><span style={s.roomName}>{r.name}</span></span>
@@ -1470,7 +1470,7 @@ export default function MeetSlot() {
                   <div style={s.roomList}>
                     {active.roomsFree.map((r) => (
                       <button key={r.id} onClick={() => setPickedRoom(r.id)}
-                        style={{ ...s.roomRow, borderColor: pickedRoom === r.id ? T.blue : "#E5E8EB", background: T.white }}>
+                        style={{ ...s.roomRow, borderColor: pickedRoom === r.id ? T.blue : "#E5E8EB", boxShadow: pickedRoom === r.id ? `inset 0 0 0 1px ${T.blue}` : "none", background: T.white }}>
                         <span style={s.roomThumb}>
                           {r.img && <img src={r.img} alt="" onError={(e) => { e.currentTarget.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
                         </span>
