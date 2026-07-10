@@ -959,7 +959,7 @@ export default function MeetSlot() {
               </div>
             </div>
             <div style={{ position: "relative", width: "100%" }}>
-              <button style={s.dateField} onClick={openPicker}>
+              <button className="field" style={s.dateField} onClick={openPicker}>
                 <span>{dateRangeLabel(days)}</span>
                 <img src="/icons/calendar.svg" width="16" height="16" alt="" />
               </button>
@@ -996,7 +996,7 @@ export default function MeetSlot() {
                   )}
                 </div>
                 <div style={s.deptWrap}>
-                  <button style={s.deptTrigger} onClick={() => setDeptOpen((v) => !v)}>
+                  <button className="field" style={s.deptTrigger} onClick={() => setDeptOpen((v) => !v)}>
                     <span style={s.deptTriggerText}>{deptFilter.length === 0 ? "모든 직군" : deptFilter.length <= 2 ? deptFilter.join(", ") : `${deptFilter.length}개 직군`}</span>
                     <img src="/icons/chevron.svg" width="18" height="18" alt="" style={{ flexShrink: 0 }} />
                   </button>
@@ -1720,7 +1720,7 @@ input::placeholder, textarea::placeholder { color: #B0B8C1; opacity: 1; }
 .mss.mss-noscroll::-webkit-scrollbar { width: 0; height: 0; }
 .mss.mss-noscroll { scrollbar-width: none; }
 .mss.mss-noscroll::after { content: ""; display: block; height: 34px; flex: 0 0 auto; } /* 스크롤 끝에서도 아래 여백 확보(패딩 collapse 회피) */
-button:focus-visible { outline: 2px solid ${T.blue}; outline-offset: 1px; }
+button:focus-visible:not(.field) { outline: 2px solid ${T.blue}; outline-offset: 1px; }
 .emp-row:hover:not(:disabled) { background: ${T.gray50} !important; }
 .cand-block:hover { filter: brightness(0.955); }
 /* 추천 계산 로딩: 버튼 배경 파도(좌→우 연·진) + 점 로더 + 결과 드롭다운 열림 */
@@ -1795,7 +1795,7 @@ const s = {
   durationVal: { color: T.ink, fontWeight: 800 },
   timeSelect: { width: "100%", height: 46, border: "none", borderRadius: 12, padding: "0 30px 0 12px", fontSize: 13.5, background: T.gray100, color: T.ink, fontWeight: 600, cursor: "pointer", appearance: "none", WebkitAppearance: "none", MozAppearance: "none", textOverflow: "ellipsis" },
   timeChevron: { position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", display: "inline-flex", pointerEvents: "none" },
-  dateField: { width: "100%", height: 46, borderRadius: 12, border: "1px solid #E5E8EB", padding: "0 15px", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "space-between", background: T.white, fontWeight: 500, color: "#4E5968", cursor: "pointer", textAlign: "left", boxSizing: "border-box" },
+  dateField: { width: "100%", height: 46, borderRadius: 12, borderStyle: "solid", outline: "none", padding: "0 15px", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "space-between", background: T.white, fontWeight: 500, color: "#4E5968", cursor: "pointer", textAlign: "left", boxSizing: "border-box" },
   periodHead: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 7 },
   modeToggle: { display: "flex", background: T.gray100, borderRadius: 8, padding: 2, gap: 2 },
   modeBtn: { fontSize: 11.5, fontWeight: 700, color: T.gray500, padding: "4px 11px", borderRadius: 6, cursor: "pointer" },
@@ -1812,7 +1812,7 @@ const s = {
   searchIcon: { position: "absolute", left: 15, top: "50%", transform: "translateY(-50%)", display: "inline-flex" },
   searchInput: { width: "100%", height: 46, borderStyle: "solid", borderRadius: 12, padding: "0 15px 0 37px", fontSize: 14, letterSpacing: -0.28, background: T.white, color: T.gray700, fontWeight: 500, boxSizing: "border-box", outline: "none" },
   deptWrap: { position: "relative", width: "100%" },
-  deptTrigger: { width: "100%", height: 46, borderWidth: 1, borderStyle: "solid", borderColor: "#E5E8EB", borderRadius: 12, padding: "0 15px", fontSize: 14, letterSpacing: -0.28, background: T.white, color: T.gray700, fontWeight: 500, cursor: "pointer", outline: "none", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left" },
+  deptTrigger: { width: "100%", height: 46, borderStyle: "solid", borderRadius: 12, padding: "0 15px", fontSize: 14, letterSpacing: -0.28, background: T.white, color: T.gray700, fontWeight: 500, cursor: "pointer", outline: "none", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left" },
   deptMenu: { position: "absolute", top: 50, left: 0, width: "100%", background: T.white, borderRadius: 10, padding: 4, boxShadow: "0 2px 5px rgba(52,59,87,0.16)", zIndex: 41, display: "flex", flexDirection: "column", gap: 4, boxSizing: "border-box" },
   deptTriggerText: { flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
   deptItem: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, width: "100%", padding: "8px 10px", borderRadius: 8, background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontSize: 13, fontWeight: 400, color: T.gray700, letterSpacing: -0.26, lineHeight: "18px" },
