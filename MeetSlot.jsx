@@ -1555,7 +1555,7 @@ export default function MeetSlot() {
                   <img src="/icons/empty-blocks.svg" width="50" height="47" alt="" />
                   <div style={s.emptyTextCol}>
                     <span style={s.emptyTitle}>선택한 시간이 없어요</span>
-                    <span style={s.emptyDesc}>가능한 시간을 선택하거나 추천 시간을 찾아보세요</span>
+                    <span style={s.emptyDesc}>빈 시간을 클릭하거나 추천 시간을 찾아보세요</span>
                   </div>
                 </div>
               </div>
