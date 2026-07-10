@@ -1008,7 +1008,7 @@ export default function MeetSlot() {
                   )}
                 </div>
               </div>
-              <div className="mss" style={s.empList}>
+              <div className="cal-scroll" style={s.empList}>
                 {filteredEmployees.map((e) => {
                   const isSel = selectedIds.includes(e.id);
                   return (
