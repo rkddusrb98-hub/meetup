@@ -111,20 +111,14 @@ const EMPLOYEES = [
 const SCHEDULES = {
   // 근무시간 9~18시. 하루를 촘촘히 채우되 공통으로 비는 창을 남겨 후보가 뜨게 함.
   // 9시 전·18시 이후엔 회사라 전체에서 딱 2개(u3 새벽 배포, u6 야간 온콜)만.
-  // 김도현 (PM) — 바쁜 한 주, 빈 슬롯 3개만(월 11시·화 13시·목 17시). 회피 15~16.
-  me: [
-    { day: "mon", start: 540, end: 660, title: "주간 스프린트 계획" }, { day: "mon", start: 780, end: 900, title: "제품 리뷰" }, { day: "mon", start: 960, end: 1080, title: "디자인 싱크" },
-    { day: "tue", start: 540, end: 720, title: "고객사 미팅" }, { day: "tue", start: 840, end: 1080, title: "분기 로드맵 회의" },
-    { day: "wed", start: 540, end: 720, title: "경영진 회의" }, { day: "wed", start: 780, end: 1080, title: "채용 인터뷰" },
-    { day: "thu", start: 540, end: 720, title: "발표 준비" }, { day: "thu", start: 780, end: 1020, title: "오프사이트" },
-    { day: "fri", start: 540, end: 720, title: "스프린트 리뷰" }, { day: "fri", start: 780, end: 1080, title: "분기 계획 워크숍" },
-  ],
-  // 이가영 (Sales) — 미팅 몇 개만.
-  u1: [{ day: "tue", start: 660, end: 720, title: "제품 데모" }, { day: "thu", start: 600, end: 660, title: "영업 제안 미팅" }],
-  // 윤지은 (Product Designer) — 회의 적당, 회피 13~15.
-  u2: [{ day: "mon", start: 600, end: 660, title: "디자인 리뷰" }, { day: "wed", start: 960, end: 1020, title: "디자인 리뷰" }],
-  // 정지훈 (Head of Product) — 의사결정 회의 몇 개, 오전 회피 9~11.
-  u3: [{ day: "mon", start: 540, end: 600, title: "경영진 회의" }, { day: "wed", start: 960, end: 1020, title: "채용 인터뷰" }, { day: "fri", start: 600, end: 720, title: "채용 인터뷰" }],
+  // 김도현 (PM) — 적당히 바쁨. 6명 공통 빈 슬롯은 월10·수13·금11만 남게 설계. 회피 15~16.
+  me: [{ day: "mon", start: 660, end: 720, title: "1:1 미팅" }, { day: "mon", start: 780, end: 900, title: "제품 리뷰" }, { day: "mon", start: 960, end: 1080, title: "디자인 싱크" }, { day: "wed", start: 960, end: 1080, title: "고객사 미팅" }, { day: "fri", start: 780, end: 840, title: "발표 준비" }],
+  // 이가영 (Sales)
+  u1: [{ day: "mon", start: 960, end: 1080, title: "고객사 방문" }, { day: "tue", start: 660, end: 720, title: "제품 데모" }, { day: "tue", start: 780, end: 840, title: "계약 협의" }, { day: "thu", start: 600, end: 720, title: "고객 미팅" }],
+  // 윤지은 (Product Designer) — 회피 13~15.
+  u2: [{ day: "tue", start: 960, end: 1080, title: "집중 업무" }, { day: "wed", start: 600, end: 720, title: "디자인 워크숍" }, { day: "fri", start: 960, end: 1080, title: "디자인 리뷰" }],
+  // 정지훈 (Head of Product) — 오전 회피 9~10.
+  u3: [{ day: "thu", start: 780, end: 840, title: "채용 인터뷰" }, { day: "thu", start: 1020, end: 1080, title: "저녁 브리핑" }, { day: "fri", start: 600, end: 660, title: "경영진 회의" }],
   // 박하린 (Backend, 선택) — 회의 최소, 집중 15~17 회피.
   u4: [{ day: "mon", start: 780, end: 840, title: "코드 리뷰" }, { day: "tue", start: 840, end: 900, title: "API 설계 리뷰" }],
   // 박은주 (Product Designer, 선택) — 회의 가볍게, 14~17 회피.
@@ -979,7 +973,7 @@ export default function MeetSlot() {
               <div style={s.partFields}>
                 <div style={s.searchWrap}>
                   <span style={s.searchIcon}><img src="/icons/search.svg" width="16" height="16" alt="" /></span>
-                  <input style={s.searchInput} value={search} onChange={(e) => setSearch(e.target.value)}
+                  <input className="field" style={s.searchInput} value={search} onChange={(e) => setSearch(e.target.value)}
                     onFocus={() => setFocusedField("search")} onBlur={() => setFocusedField(null)} placeholder="이름 검색" />
                   {search && (
                     <button style={s.clearBtn} onMouseDown={(e) => e.preventDefault()} onClick={() => setSearch("")}>
@@ -1225,7 +1219,7 @@ export default function MeetSlot() {
                 <div style={s.confirmCardDivider} />
                 <div style={s.confirmRow}>
                   <span style={s.calIconBox}><img src="/icons/cal-check.svg" width="13" height="13" alt="" /></span>
-                  <span style={s.confirmRowText}>{confirmed.dayLabel} · {confirmed.timeLabel}</span>
+                  <span style={{ ...s.confirmRowText, whiteSpace: "nowrap" }}>{confirmed.dayLabel} · {confirmed.timeLabel}</span>
                 </div>
                 <div style={s.confirmRow}>
                   <img src={confirmed.room === "온라인" ? "/icons/online.svg" : "/icons/location.svg"} width="16" height="16" alt="" style={{ flexShrink: 0 }} />
@@ -1260,7 +1254,7 @@ export default function MeetSlot() {
                 <div style={s.infoSummary}>
                   <div style={s.confirmRow}>
                     <span style={s.calIconBox}><img src="/icons/cal-check.svg" width="13" height="13" alt="" /></span>
-                    <span style={s.confirmRowText}>{pendingConfirm.dayLabel} · {pendingConfirm.timeLabel}</span>
+                    <span style={{ ...s.confirmRowText, whiteSpace: "nowrap" }}>{pendingConfirm.dayLabel} · {pendingConfirm.timeLabel}</span>
                   </div>
                   <div style={s.confirmRow}>
                     <img src={pendingConfirm.room === "온라인" ? "/icons/online.svg" : "/icons/location.svg"} width="16" height="16" alt="" style={{ flexShrink: 0 }} />
@@ -1275,11 +1269,11 @@ export default function MeetSlot() {
                 <div style={s.infoFields}>
                   <div style={s.infoField}>
                     <span style={s.infoLabel}>제목</span>
-                    <input style={s.input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="회의 제목 입력" />
+                    <input className="field" style={s.input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="회의 제목 입력" />
                   </div>
                   <div style={s.infoField}>
                     <span style={s.infoLabel}>메모</span>
-                    <textarea style={s.memoInput} value={memo} onChange={(e) => setMemo(e.target.value)} placeholder="남길 메모 혹은 안건 입력" />
+                    <textarea className="field" style={s.memoInput} value={memo} onChange={(e) => setMemo(e.target.value)} placeholder="남길 메모 혹은 안건 입력" />
                   </div>
                   <div style={s.infoField}>
                     <span style={s.infoLabel}>파일</span>
@@ -1576,7 +1570,7 @@ export default function MeetSlot() {
             </div>
             <div style={s.askSection}>
               <div style={s.askSecLabel}><span>메시지</span></div>
-              <textarea className="mss" style={s.askTextarea} value={askMsg} onChange={(e) => setAskMsg(e.target.value)} placeholder="물어볼 내용을 적어주세요" />
+              <textarea className="mss field" style={s.askTextarea} value={askMsg} onChange={(e) => setAskMsg(e.target.value)} placeholder="물어볼 내용을 적어주세요" />
             </div>
             <button style={{ ...s.primaryBtn, ...(askIds.length ? {} : { background: "#C9E2FF", cursor: "default" }) }} disabled={!askIds.length} onClick={sendAsk}>보내기</button>
           </div>
@@ -1705,6 +1699,10 @@ input:focus, select:focus { border-color: #3182F6 !important; box-shadow: inset 
 /* 캘린더 스크롤: 스크롤바가 레이아웃 공간을 예약하지 않게(좌우 패딩 대칭) — 스크롤은 그대로 동작 */
 .cal-scroll { scrollbar-width: none; }
 .cal-scroll::-webkit-scrollbar { width: 0; height: 0; }
+/* 입력 필드: 평소 기본 회색, hover 시 파란 외곽선 50% 투명, focus(클릭) 시 파란 외곽선 */
+.field { border-color: #E5E8EB; transition: border-color .15s ease; }
+.field:hover:not(:focus) { border-color: rgba(49,130,246,0.5); }
+.field:focus { border-color: #3182F6; }
 /* 우측 추천 패널: 네이티브 스크롤바는 공간을 안 먹게 숨기고(좌우 패딩 대칭 유지), 커스텀 오버레이 thumb를 위에 얹는다 */
 .mss.mss-noscroll::-webkit-scrollbar { width: 0; height: 0; }
 .mss.mss-noscroll { scrollbar-width: none; }
@@ -1766,7 +1764,7 @@ const s = {
   formTop: { display: "flex", flexDirection: "column", gap: 16, width: "100%" },
   inputWrap: { position: "relative", width: "100%" },
   clearBtn: { position: "absolute", right: 15, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, borderRadius: "50%", background: "#8B95A1", display: "flex", alignItems: "center", justifyContent: "center", border: "none", cursor: "pointer", padding: 0, flexShrink: 0 },
-  input: { width: "100%", height: 46, borderWidth: 1, borderStyle: "solid", borderColor: "#E5E8EB", borderRadius: 12, padding: "0 15px", fontSize: 13, letterSpacing: -0.26, background: T.white, color: T.gray700, fontWeight: 500, boxSizing: "border-box", outline: "none" },
+  input: { width: "100%", height: 46, borderWidth: 1, borderStyle: "solid", borderRadius: 12, padding: "0 15px", fontSize: 13, letterSpacing: -0.26, background: T.white, color: T.gray700, fontWeight: 500, boxSizing: "border-box", outline: "none" },
   inputWarn: { borderColor: "#F04452" },
   titleWarnMsg: { padding: "0 4px", fontFamily: FONT, fontSize: 12, fontWeight: 500, lineHeight: "14px", letterSpacing: -0.24, color: "#F04452" },
   fieldRow: { display: "flex", gap: 10 },
@@ -1799,7 +1797,7 @@ const s = {
   partFields: { display: "flex", flexDirection: "column", gap: 8, width: "100%" },
   searchWrap: { position: "relative", width: "100%" },
   searchIcon: { position: "absolute", left: 15, top: "50%", transform: "translateY(-50%)", display: "inline-flex" },
-  searchInput: { width: "100%", height: 46, borderWidth: 1, borderStyle: "solid", borderColor: "#E5E8EB", borderRadius: 12, padding: "0 15px 0 37px", fontSize: 14, letterSpacing: -0.28, background: T.white, color: T.gray700, fontWeight: 500, boxSizing: "border-box", outline: "none" },
+  searchInput: { width: "100%", height: 46, borderWidth: 1, borderStyle: "solid", borderRadius: 12, padding: "0 15px 0 37px", fontSize: 14, letterSpacing: -0.28, background: T.white, color: T.gray700, fontWeight: 500, boxSizing: "border-box", outline: "none" },
   deptWrap: { position: "relative", width: "100%" },
   deptTrigger: { width: "100%", height: 46, borderWidth: 1, borderStyle: "solid", borderColor: "#E5E8EB", borderRadius: 12, padding: "0 15px", fontSize: 14, letterSpacing: -0.28, background: T.white, color: T.gray700, fontWeight: 500, cursor: "pointer", outline: "none", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left" },
   deptMenu: { position: "absolute", top: 50, left: 0, width: "100%", background: T.white, borderRadius: 10, padding: 4, boxShadow: "0 2px 5px rgba(52,59,87,0.16)", zIndex: 41, display: "flex", flexDirection: "column", gap: 4, boxSizing: "border-box" },
@@ -1985,7 +1983,7 @@ const s = {
   infoFields: { display: "flex", flexDirection: "column", gap: 16, width: "100%" },
   infoField: { display: "flex", flexDirection: "column", gap: 6, width: "100%" },
   infoLabel: { fontSize: 13, fontWeight: 500, lineHeight: "18px", letterSpacing: -0.26, color: "#333D4B", padding: "0 2px" },
-  memoInput: { width: "100%", height: 80, border: "1px solid #E5E8EB", borderRadius: 12, padding: "15px", fontSize: 13, letterSpacing: -0.26, color: T.gray700, fontWeight: 500, fontFamily: FONT, resize: "none", outline: "none", boxSizing: "border-box", lineHeight: "16px" },
+  memoInput: { width: "100%", height: 80, borderWidth: 1, borderStyle: "solid", borderRadius: 12, padding: "15px", fontSize: 13, letterSpacing: -0.26, color: T.gray700, fontWeight: 500, fontFamily: FONT, resize: "none", outline: "none", boxSizing: "border-box", lineHeight: "16px" },
   // 동료에게 물어보기 모달
   modalBackdrop: { position: "fixed", inset: 0, background: "rgba(25,31,40,0.45)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, zIndex: 1000 },
   modalCard: { width: 380, maxWidth: "100%", maxHeight: "86vh", overflowY: "auto", background: T.white, borderRadius: 20, padding: 24, display: "flex", flexDirection: "column", gap: 18, boxSizing: "border-box", boxShadow: "0 12px 48px rgba(25,31,40,0.24)" },
@@ -2002,7 +2000,7 @@ const s = {
   askName: { flex: 1, minWidth: 0, fontWeight: 600, fontSize: 13, letterSpacing: -0.26, color: "#333D4B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
   askCheck: { width: 18, height: 18, borderRadius: 6, borderWidth: 2, borderStyle: "solid", borderColor: T.gray300, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
   askCheckOn: { background: T.blue, borderColor: T.blue },
-  askTextarea: { width: "100%", height: 128, border: "1px solid #E5E8EB", borderRadius: 12, padding: "13px 15px", fontSize: 13, letterSpacing: -0.26, color: T.gray700, fontWeight: 500, fontFamily: FONT, resize: "none", outline: "none", boxSizing: "border-box", lineHeight: "20px" },
+  askTextarea: { width: "100%", height: 128, borderWidth: 1, borderStyle: "solid", borderRadius: 12, padding: "13px 15px", fontSize: 13, letterSpacing: -0.26, color: T.gray700, fontWeight: 500, fontFamily: FONT, resize: "none", outline: "none", boxSizing: "border-box", lineHeight: "20px" },
   askToast: { position: "fixed", top: 20, left: "50%", transform: "translateX(-50%)", zIndex: 2000, display: "flex", alignItems: "center", gap: 8, background: T.white, padding: 14, borderRadius: 100, boxShadow: "0 4px 10px rgba(176,184,193,0.34)", whiteSpace: "nowrap", animation: "toastDrop .42s cubic-bezier(.16,.84,.34,1.12) both" },
   askToastIcon: { width: 20, height: 20, borderRadius: 10, background: "#00C478", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
   askToastText: { fontSize: 15, fontWeight: 600, lineHeight: "18px", letterSpacing: -0.32, color: "#333D4B" },
