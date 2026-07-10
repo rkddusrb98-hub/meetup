@@ -1126,7 +1126,7 @@ export default function MeetSlot() {
                     onClick={() => { if (hoverCell && hoverCell.col === di) openCell(`${di}-${hoverCell.start}`); }}>
                     {/* 근무시간 밖 hover 프리뷰 (연한 회색, 회의 길이만큼) */}
                     {hoverCell && hoverCell.col === di && (
-                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: T.gray50, borderRadius: 7, pointerEvents: "none", zIndex: 1 }} />
+                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: T.blueBgSoft, borderRadius: 7, pointerEvents: "none", zIndex: 1 }} />
                     )}
                     {/* 기존 일정 블록 (회색, 시간대별 요약) — 후보 블록과 겹치는 건 제외 */}
                     {shownEvBlocks.map((b, i) => {
