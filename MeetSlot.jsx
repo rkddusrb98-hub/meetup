@@ -1077,7 +1077,7 @@ export default function MeetSlot() {
                   <span style={s.attName}>{displayName(p.id)}</span>
                   <button onClick={() => toggleRequired(p.id)} aria-label={p.required ? "필수 (누르면 선택)" : "선택 (누르면 필수)"}
                     className={`att-badge ${p.required ? "att-badge-req" : "att-badge-opt"}`} style={s.attBadge}>
-                    {p.required ? "필수" : "선택"}
+                    <span className="att-badge-txt">{p.required ? "필수" : "선택"}</span>
                   </button>
                   <button onClick={() => removeParticipant(p.id)} className="att-x" aria-label="제외" style={s.attX}>
                     <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M4.2002 4L6.7002 1.5M4.2002 4L1.7002 1.5M4.2002 4L1.7002 6.5M4.2002 4L6.7002 6.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>
@@ -1751,8 +1751,9 @@ button:focus-visible:not(.field) { outline: 2px solid ${T.blue}; outline-offset:
 .reco-tag-grad { background: linear-gradient(90deg, #558BFF, #00B7FF); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-size: 13px; font-weight: 700; letter-spacing: -0.26px; line-height: 18px; }
 .reco-headline-grad { background: linear-gradient(90deg, #49669A, #21354D 49%, #4174AB); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
 /* 참석자 칩 제외(×) 버튼 hover */
-.att-badge { transition: background .15s ease, border-color .15s ease, color .15s ease, transform .18s cubic-bezier(0.34,1.56,0.64,1); }
-.att-badge:active { transform: scale(0.90); }
+.att-badge { transition: background .15s ease, border-color .15s ease, color .15s ease; }
+.att-badge-txt { display: inline-block; transition: transform .18s cubic-bezier(0.34,1.56,0.64,1); }
+.att-badge:active .att-badge-txt { transform: scale(0.90); }
 .att-badge-req { background: #3182F6; color: #FFF; border: 1px solid #3182F6; }
 .att-badge-req:hover { background: #2272EB; border-color: #2272EB; }
 .att-badge-opt { background: #FFF; color: #2272EB; border: 1.5px solid #3182F6; }
