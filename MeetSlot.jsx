@@ -187,8 +187,7 @@ const CONSTRAINTS = {
 
 const H = (h, m = 0) => h * 60 + m;
 const ROOM_LOCK = [
-  // 점심(12~13) 매일 + 요일별 오후 잠금 → "회의실 없음" 상황이 더 자주 뜨게
-  { day: "mon", start: H(12), end: H(13) }, { day: "tue", start: H(12), end: H(13) }, { day: "wed", start: H(12), end: H(13) }, { day: "thu", start: H(12), end: H(13) }, { day: "fri", start: H(12), end: H(13) },
+  // 요일별 오후 1시간 잠금만 → "회의실 없음" 데모(캘린더에 빨간 블록으로 표시됨). 점심 상시 잠금은 빈칸 클릭 시 혼란 유발해 제거.
   { day: "mon", start: H(15), end: H(16) }, { day: "tue", start: H(10), end: H(11) }, { day: "wed", start: H(15), end: H(16) }, { day: "thu", start: H(16), end: H(17) }, { day: "fri", start: H(14), end: H(15) },
 ];
 const ROOMS = [
