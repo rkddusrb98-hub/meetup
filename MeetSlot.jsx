@@ -1699,7 +1699,6 @@ const globalCss = `
 button { font-family: inherit; border: none; background: none; color: inherit; text-align: inherit; cursor: pointer; padding: 0; }
 input { font-family: inherit; }
 input::placeholder, textarea::placeholder { color: #B0B8C1; opacity: 1; }
-input:focus, select:focus { border-color: #3182F6 !important; box-shadow: inset 0 0 0 1.3px #3182F6 !important; outline: none !important; }
 ::-webkit-scrollbar { width: 7px; height: 7px; }
 ::-webkit-scrollbar-thumb { background: ${T.gray300}; border-radius: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -1721,7 +1720,7 @@ input:focus, select:focus { border-color: #3182F6 !important; box-shadow: inset 
 .mss.mss-noscroll::-webkit-scrollbar { width: 0; height: 0; }
 .mss.mss-noscroll { scrollbar-width: none; }
 .mss.mss-noscroll::after { content: ""; display: block; height: 34px; flex: 0 0 auto; } /* 스크롤 끝에서도 아래 여백 확보(패딩 collapse 회피) */
-button:focus-visible, input:focus-visible { outline: 2px solid ${T.blue}; outline-offset: 1px; }
+button:focus-visible { outline: 2px solid ${T.blue}; outline-offset: 1px; }
 .emp-row:hover:not(:disabled) { background: ${T.gray50} !important; }
 .cand-block:hover { filter: brightness(0.955); }
 /* 추천 계산 로딩: 버튼 배경 파도(좌→우 연·진) + 점 로더 + 결과 드롭다운 열림 */
