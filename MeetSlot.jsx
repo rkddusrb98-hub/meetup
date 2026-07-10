@@ -809,8 +809,13 @@ export default function MeetSlot() {
   // 근무시간 내 ready(색블록)는 "추천", 근무시간 밖 수동선택 ready는 "가능"
   const activeInBiz = aSlot != null && aSlot >= BIZ_START && aSlot + durMin <= BIZ_END;
   const activeLabel = active ? ((active.status === "ready" && !activeInBiz) ? "가능" : STATUS_LABEL[active.status]) : "";
-  // 회의 구간 표시 문자열
-  const slotRangeLabel = aSlot != null ? slotRangeShort(aSlot, aSlot + durMin) : "";
+  // 회의 구간 표시 문자열. 단, 기존 일정(불가) 블록을 누른 경우엔 그 일정의 실제 시간대를 표시(블록 크기와 일치)
+  const activeEvBlock = (active && active.status === "unfit" && aDay != null && aSlot != null)
+    ? dayEventBlocks(participants, aDay).find((b) => b.start <= aSlot && aSlot < b.end)
+    : null;
+  const slotRangeLabel = activeEvBlock
+    ? slotRangeShort(activeEvBlock.start, activeEvBlock.end)
+    : (aSlot != null ? slotRangeShort(aSlot, aSlot + durMin) : "");
   // 추천 결과(다중): 선택된 것 = 프리미엄 카드, 나머지 = 보조 카드
   const recoPicks = recos && recos.picks ? recos.picks : [];
   // 추천 계산 조건 서명 (참석자/날짜/시간/옵션 변경 감지)
