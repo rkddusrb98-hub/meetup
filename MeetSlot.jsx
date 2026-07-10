@@ -579,7 +579,7 @@ export default function MeetSlot() {
   const [fromReco, setFromReco] = useState(false); // 현재 선택이 추천 결과에서 온 것인지(=추천) vs 수동 hover(=가능)
   const [recoLoading, setRecoLoading] = useState(false); // 추천 계산 로딩(연출)
   const [pickedRoom, setPickedRoom] = useState(null);
-  const [rightW, setRightW] = useState(380); // 오른쪽 패널 폭(px) — 드래그로 조절
+  const [rightW, setRightW] = useState(340); // 오른쪽 패널 폭(px) — 드래그로 조절
   const [options, setOptions] = useState({ relaxPref: false, online: false });
   const [confirmed, setConfirmed] = useState(null);
   const [tipOpen, setTipOpen] = useState(false); // 필수/선택 안내 툴팁 (클릭 토글)
