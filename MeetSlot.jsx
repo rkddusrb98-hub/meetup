@@ -1809,8 +1809,8 @@ const s = {
   meTag: { fontSize: 12, fontWeight: 700, color: T.gray500, letterSpacing: -0.24 },
   empMeta: { color: T.gray500, fontSize: 12, letterSpacing: -0.24, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
 
-  center: { display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0, overflow: "hidden", padding: "16px 20px", gap: 12, background: T.white },
-  attendeeBar: { padding: "2px 2px 14px" },
+  center: { display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0, overflow: "hidden", padding: "16px 20px 24px", gap: 12, background: T.white },
+  attendeeBar: { padding: "2px 2px 4px" },
   attendeeBarTitle: { fontSize: 14, fontWeight: 700, color: T.gray700, display: "flex", alignItems: "center", gap: 6, marginBottom: 12, letterSpacing: -0.28, lineHeight: "16px" },
   attCount: { display: "inline-flex", alignItems: "center", gap: 3, marginLeft: 3, fontSize: 13, fontWeight: 600, letterSpacing: -0.26 },
   attCountReq: { color: "#3182F6" },
