@@ -449,6 +449,12 @@ function recoTierOf(ev, participants, options) {
   return { tier, reqPref, optIssue, optAvail: optTotal - optIssue.length, roomsN: ev.roomsFree.length, confirmCount: reqPref.length + optIssue.length };
 }
 // "일정 추천 받기": 우선순위 T1>T2>T3>T4, 동일 티어 내 날짜·시간·확인필요수·선택가능수·회의실수 순. 최대 3개(붙은 시간 배제).
+// 참석자들이 그 요일에 가진 기존 일정 개수(적을수록 '한가한 날')
+function dayEventCount(dayKey, participants) {
+  let n = 0;
+  for (const p of participants) for (const e of (SCHEDULES[p.id] || [])) if (e.day === dayKey) n++;
+  return n;
+}
 function computeRecos(days, durMin, participants, options) {
   const cands = [];
   days.forEach((d, di) => {
@@ -473,16 +479,22 @@ function computeRecos(days, durMin, participants, options) {
     if (picks.length >= 3) break;
     if (pickSeparated(c, picks)) picks.push(c);
   }
-  // 티어1(전부 가능) 여러 개면 각도별 이유 배정: 첫 픽=가장 빠름, 나머지는 구체 이유
-  picks.forEach((p, i) => {
-    if (i === 0) { p.kind = "fast"; return; }
-    if (p.tier !== 1) { p.kind = "status"; return; }
-    // 기본 이유: 회의실 넉넉 > 시간대
-    p.kind = (!options.online && p.roomsN >= 3) ? "rooms" : (p.start < 720 ? "morning" : "afternoon");
+  // 티어1(전부 가능) 여러 개면 각도별 '구체 이유'를 서로 다르게 배정: 가장 빠름 / 앞뒤 여유 / 한가한 날 / 회의실 여유
+  picks.forEach((p, i) => { p.kind = i === 0 ? "fast" : (p.tier === 1 ? null : "status"); });
+  const rest = picks.slice(1).filter((p) => p.tier === 1);
+  const used = new Set();
+  // 1) 앞뒤 양쪽 여유가 가장 큰 것(30분+) → 여유
+  const byBuf = rest.filter((p) => p.bufMin >= 30).sort((a, b) => b.bufMin - a.bufMin);
+  if (byBuf[0]) { byBuf[0].kind = "relaxed"; used.add("relaxed"); }
+  // 2) 나머지: 일정 적은 날 > 회의실 여유(오프라인) 순, 서로 안 겹치게
+  rest.filter((p) => !p.kind).forEach((p) => {
+    const light = dayEventCount(p.dayKey, participants) <= 1;
+    if (light && !used.has("lightday")) { p.kind = "lightday"; used.add("lightday"); }
+    else if (!options.online && p.roomsN >= 3 && !used.has("rooms")) { p.kind = "rooms"; used.add("rooms"); }
+    else if (!used.has("lightday")) { p.kind = "lightday"; used.add("lightday"); }
+    else if (!used.has("rooms") && !options.online) { p.kind = "rooms"; used.add("rooms"); }
+    else { p.kind = "lightday"; }
   });
-  // 나머지 가능 픽 중 '앞뒤 양쪽' 여유가 가장 큰 것(30분+)만 '여유' 이유로
-  const restReady = picks.slice(1).filter((p) => p.tier === 1).sort((a, b) => b.bufMin - a.bufMin);
-  if (restReady[0] && restReady[0].bufMin >= 30) restReady[0].kind = "relaxed";
   return { level: "ok", picks };
 }
 
@@ -517,9 +529,8 @@ function recoReason(p) {
   if (p.tier === 4) return "필수 참석자 확인이 필요해요";
   // 티어1(전부 가능)이 여러 개면 각도별 구체 이유
   if (p.kind === "relaxed") return "앞뒤로 여유로운 시간이에요";
+  if (p.kind === "lightday") return "일정이 적은 날이라 잡기 좋아요";
   if (p.kind === "rooms") return "회의실 선택지가 많아요";
-  if (p.kind === "morning") return "오전이라 집중하기 좋아요";
-  if (p.kind === "afternoon") return "오후에 잡기 좋아요";
   return "가장 빠른 시간이에요";
 }
 // 추천 카드 보조 설명: 실제 조건을 구체적으로
