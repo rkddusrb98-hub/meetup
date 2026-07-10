@@ -1116,6 +1116,8 @@ export default function MeetSlot() {
                 const candBlocks = d.isPast ? [] : dayCandidateBlocks(d.key, durMin, participants, options).filter((b) => !(isToday && b.start < NOW_MIN));
                 // 후보 블록(색블록)이 이미 그 시간대 상태를 표시하므로, 겹치는 회색 일정 블록은 숨긴다 → 회색이 뒤로 삐져나오는 이중표시 방지
                 const shownEvBlocks = evBlocks.filter((eb) => !candBlocks.some((cb) => cb.start < eb.end && eb.start < cb.end));
+                // '가능'(파랑)은 블록으로 깔지 않음 — 빈 공간을 클릭해 원하는 30분 시작으로 직접 잡게. 확인필요/회의실없음만 블록 표시.
+                const shownCandBlocks = candBlocks.filter((b) => b.status !== "ready");
                 return (
                   <div key={`${d.key}-${di}`}
                     style={{ ...s.calCol, opacity: d.isPast ? 0.5 : 1, cursor: (hoverCell && hoverCell.col === di) ? "pointer" : "default" }}
@@ -1162,7 +1164,7 @@ export default function MeetSlot() {
                       );
                     })}
                     {/* 실시간 후보 블록 (파랑/노랑/빨강). 근무시간 내 계산. */}
-                    {candBlocks.map((b, i) => {
+                    {shownCandBlocks.map((b, i) => {
                       const top = ((b.start - DAY_START) / SLOT) * SLOT_PX;
                       const height = ((b.end - b.start) / SLOT) * SLOT_PX;
                       const tok = STATUS[b.status];
@@ -1181,8 +1183,8 @@ export default function MeetSlot() {
                         </button>
                       );
                     })}
-                    {/* 근무시간 밖(수동 hover-선택) 슬롯 강조 — 근무시간 안은 위 후보 블록이 담당 */}
-                    {aDi === di && aSlot != null && active && active.status !== "unfit" && (aSlot < BIZ_START || aSlot + durMin > BIZ_END) && (() => {
+                    {/* 클릭해 잡은 슬롯 강조 — 색 블록(확인필요/회의실없음)에 없는 활성 슬롯(=가능 또는 근무시간 밖)을 여기서 렌더 */}
+                    {aDi === di && aSlot != null && active && active.status !== "unfit" && !shownCandBlocks.some((b) => b.start === aSlot) && (() => {
                       const tok = STATUS[active.status];
                       const top = ((aSlot - DAY_START) / SLOT) * SLOT_PX;
                       const height = (durMin / SLOT) * SLOT_PX;
