@@ -1,7 +1,7 @@
-<svg preserveAspectRatio="xMidYMid meet" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 13 12.6908" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 14 13.667" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Group 9">
-<rect id="Rectangle 40377" y="1.54791" width="13" height="11.1429" rx="1.85714" fill="#E5E8EB"/>
-<path id="Vector" d="M8.35686 6.80951L5.88067 9.2857L4.64258 8.0476" stroke="#333D4B" stroke-width="1.2381" stroke-linecap="round" stroke-linejoin="round"/>
-<path id="Union" d="M8.97559 0C9.3174 0 9.59459 0.277362 9.59473 0.619141V0.928711H11.1426C12.1682 0.928711 13 1.76046 13 2.78613V3.71387H8.98535C8.9821 3.71392 8.97885 3.71484 8.97559 3.71484C8.97232 3.71484 8.96908 3.71392 8.96582 3.71387H4.0332C4.02995 3.71392 4.0267 3.71484 4.02344 3.71484C4.02017 3.71484 4.01693 3.71392 4.01367 3.71387H0V2.78613C0 1.76046 0.83175 0.928711 1.85742 0.928711H3.4043V0.619141C3.40443 0.277362 3.68163 0 4.02344 0C4.36525 0 4.64245 0.277362 4.64258 0.619141V0.928711H8.35645V0.619141C8.35658 0.27744 8.63388 0.000125756 8.97559 0Z" fill="#FEAFB4"/>
+<rect id="Rectangle 40377" y="1.66699" width="14" height="12" rx="2" fill="#D1D6DB"/>
+<path id="Vector" d="M9 7.33333L6.33333 10L5 8.66667" stroke="#8B95A1" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Union" d="M9.66602 0C10.0342 0 10.333 0.298802 10.333 0.666992V1H12C13.1046 1 14 1.89543 14 3V4H0V3C0 1.89543 0.895431 1 2 1H3.66602V0.666992C3.66602 0.298802 3.96482 0 4.33301 0C4.7012 0 5 0.298802 5 0.666992V1H9V0.666992C9 0.298911 9.29798 0.000175864 9.66602 0Z" fill="#8B95A1"/>
 </g>
 </svg>

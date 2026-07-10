@@ -1231,16 +1231,17 @@ export default function MeetSlot() {
               <div style={s.confirmCard}>
                 <div style={s.confirmName}>{confirmed.title}</div>
                 <div style={s.confirmCardDivider} />
+                <div style={s.confirmRows}>
                 <div style={s.confirmRow}>
-                  <span style={s.calIconBox}><img src="/icons/cal-check.svg" width="13" height="13" alt="" /></span>
+                  <span style={s.calIconBox}><img src="/icons/cal-check-c.svg" width="13" height="13" alt="" /></span>
                   <span style={{ ...s.confirmRowText, whiteSpace: "nowrap" }}>{confirmed.dayLabel} · {confirmed.timeLabel}</span>
                 </div>
                 <div style={s.confirmRow}>
-                  <img src={confirmed.room === "온라인" ? "/icons/online.svg" : "/icons/location.svg"} width="16" height="16" alt="" style={{ flexShrink: 0 }} />
+                  <img src={confirmed.room === "온라인" ? "/icons/online-c.svg" : "/icons/location-c.svg"} width="16" height="16" alt="" style={{ flexShrink: 0 }} />
                   <span style={s.confirmRowText}>{confirmed.room}</span>
                 </div>
                 <div style={{ ...s.confirmRow, alignItems: "flex-start" }}>
-                  <img src="/icons/users3.svg" width="16" height="16" alt="" style={{ flexShrink: 0, marginTop: 1 }} />
+                  <img src="/icons/users3-c.svg" width="16" height="16" alt="" style={{ flexShrink: 0, marginTop: 1 }} />
                   <span style={s.confirmRowText}>{participants.map((p) => nameOf(p.id)).join(", ")}</span>
                 </div>
                 {confirmed.memo && (
@@ -1255,6 +1256,7 @@ export default function MeetSlot() {
                     <span style={s.confirmRowText}>{confirmed.files.join(", ")}</span>
                   </div>
                 )}
+                </div>
               </div>
               <button style={{ ...s.secondaryBtn, cursor: "default" }}>내 일정 보기</button>
             </div>
@@ -2028,6 +2030,7 @@ const s = {
   confirmName: { fontSize: 16, fontWeight: 700, letterSpacing: -0.3, color: "#191F28" },
   confirmCardDivider: { height: 1, background: "#AFB8C2", opacity: 0.2, width: "100%" },
   calIconBox: { width: 16, height: 16, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
+  confirmRows: { display: "flex", flexDirection: "column", gap: 10, width: "100%" },
   confirmRow: { display: "flex", gap: 14, alignItems: "center", width: "100%" },
   confirmRowText: { flex: 1, minWidth: 0, wordBreak: "keep-all", overflowWrap: "break-word", fontSize: 13, fontWeight: 700, lineHeight: "18px", letterSpacing: -0.26, color: "#4E5968" },
   secondaryBtn: { width: "100%", padding: "15px 0", background: "#E8F3FF", borderRadius: 13, fontSize: 14, fontWeight: 700, lineHeight: "16px", letterSpacing: -0.28, color: "#3182F6", cursor: "pointer", textAlign: "center" },
