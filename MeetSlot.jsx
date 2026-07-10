@@ -111,8 +111,14 @@ const EMPLOYEES = [
 const SCHEDULES = {
   // 근무시간 9~18시. 하루를 촘촘히 채우되 공통으로 비는 창을 남겨 후보가 뜨게 함.
   // 9시 전·18시 이후엔 회사라 전체에서 딱 2개(u3 새벽 배포, u6 야간 온콜)만.
-  // 김도현 (PM) — 일정 가볍게, 회피 15~16.
-  me: [{ day: "mon", start: 570, end: 630, title: "주간 스프린트 계획" }, { day: "wed", start: 600, end: 660, title: "분기 로드맵 리뷰" }, { day: "thu", start: 780, end: 840, title: "발표 준비" }],
+  // 김도현 (PM) — 바쁜 한 주, 빈 슬롯 3개만(월 11시·화 13시·목 17시). 회피 15~16.
+  me: [
+    { day: "mon", start: 540, end: 660, title: "주간 스프린트 계획" }, { day: "mon", start: 780, end: 900, title: "제품 리뷰" }, { day: "mon", start: 960, end: 1080, title: "디자인 싱크" },
+    { day: "tue", start: 540, end: 720, title: "고객사 미팅" }, { day: "tue", start: 840, end: 1080, title: "분기 로드맵 회의" },
+    { day: "wed", start: 540, end: 720, title: "경영진 회의" }, { day: "wed", start: 780, end: 1080, title: "채용 인터뷰" },
+    { day: "thu", start: 540, end: 720, title: "발표 준비" }, { day: "thu", start: 780, end: 1020, title: "오프사이트" },
+    { day: "fri", start: 540, end: 720, title: "스프린트 리뷰" }, { day: "fri", start: 780, end: 1080, title: "분기 계획 워크숍" },
+  ],
   // 이가영 (Sales) — 미팅 몇 개만.
   u1: [{ day: "tue", start: 660, end: 720, title: "제품 데모" }, { day: "thu", start: 600, end: 660, title: "영업 제안 미팅" }],
   // 윤지은 (Product Designer) — 회의 적당, 회피 13~15.
@@ -527,7 +533,7 @@ const COUNT_BUN = ["", "한 분", "두 분", "세 분", "네 분", "다섯 분",
 const STATUS_HINT = {
   ready: "지금 바로 확정할 수 있어요",
   check: "확인이 필요한 참석자가 있어요",
-  adjust: "회의실을 바꾸거나 온라인으로 전환하면 잡을 수 있어요",
+  adjust: "온라인으로 전환하면 잡을 수 있어요",
   unfit: "필수 참석자가 다른 일정과 겹쳐 잡을 수 없어요",
 };
 const AVATAR_COLORS = ["#FFE2E5", "#E3F0FF", "#E5F8EE", "#FFF1D6", "#EFE7FF", "#DDF4F4", "#FFE8D6", "#E8EAF6"];
@@ -567,13 +573,8 @@ const Icon = {
 export default function MeetSlot() {
   const [title, setTitle] = useState("");
   const [selected, setSelected] = useState([
-    // 처음 진입 시 나 포함 6명(필수 4 · 선택 2)이 선택된 상태로 시작
+    // 처음 진입 시 나만 선택된 상태로 시작
     { id: "me", required: true },
-    { id: "u1", required: true },
-    { id: "u2", required: true },
-    { id: "u3", required: true },
-    { id: "u4", required: false },
-    { id: "u5", required: false },
   ]);
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState([]); // 선택된 직군들(빈 배열=전체)
