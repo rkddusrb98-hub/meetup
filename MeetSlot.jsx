@@ -51,7 +51,15 @@ function fmtDurChip(m) { const h = Math.floor(m/60), mm = m%60; if (h && mm === 
 function slotLabel(min) { const h = Math.floor(min/60), m = min%60; const ap = h<12?"오전":"오후"; let hh=h%12; if(hh===0)hh=12; return `${ap} ${hh}:${String(m).padStart(2,"0")}`; }
 function axisLabel(min) { const h = Math.floor(min/60); const ap = h<12?"오전":"오후"; let hh=h%12; if(hh===0)hh=12; return `${ap} ${hh}:00`; }
 // 날짜 라벨: "7월 13일 월요일" (월 + 일 + 전체 요일)
-function fullDateLabel(d) { return d ? `${d.dateObj.getMonth() + 1}월 ${d.date}일 ${d.label}요일` : ""; }
+function fullDateLabel(d) { return d ? `${d.dateObj.getMonth() + 1}월 ${d.date}일 (${d.label})` : ""; }
+// 시간 범위(짧게): 시작·끝이 같은 오전/오후면 끝엔 오전/오후 생략 → "오후 5:00–6:00"
+function slotRangeShort(start, end) {
+  const sAp = Math.floor(start / 60) < 12 ? "오전" : "오후";
+  const eAp = Math.floor(end / 60) < 12 ? "오전" : "오후";
+  let eh = Math.floor(end / 60) % 12; if (eh === 0) eh = 12;
+  const endStr = eAp === sAp ? `${eh}:${String(end % 60).padStart(2, "0")}` : slotLabel(end);
+  return `${slotLabel(start)}–${endStr}`;
+}
 
 // 기간 표시 라벨
 function dateRangeLabel(days) {
@@ -103,18 +111,18 @@ const EMPLOYEES = [
 const SCHEDULES = {
   // 근무시간 9~18시. 하루를 촘촘히 채우되 공통으로 비는 창을 남겨 후보가 뜨게 함.
   // 9시 전·18시 이후엔 회사라 전체에서 딱 2개(u3 새벽 배포, u6 야간 온콜)만.
-  // 김도현 (PM) — 회의 많은 편이지만 널널하게, 회피 15~16.
-  me: [{ day: "mon", start: 570, end: 630, title: "주간 스프린트 계획" }, { day: "mon", start: 840, end: 900, title: "고객사 요구사항 리뷰" }, { day: "tue", start: 600, end: 630, title: "PO Sync" }, { day: "tue", start: 1080, end: 1140, title: "고객사 미팅" }, { day: "wed", start: 600, end: 660, title: "분기 로드맵 리뷰" }, { day: "thu", start: 780, end: 870, title: "발표 준비" }, { day: "fri", start: 600, end: 630, title: "PO Sync" }, { day: "fri", start: 960, end: 1020, title: "회고" }],
-  // 이가영 (Sales) — 월·목 종일 외근, 저녁 고객 일정.
-  u1: [{ day: "mon", start: 540, end: 1080, title: "고객사 방문" }, { day: "mon", start: 1110, end: 1200, title: "고객사 회식" }, { day: "tue", start: 660, end: 720, title: "제품 데모" }, { day: "tue", start: 1140, end: 1230, title: "고객사 회식" }, { day: "wed", start: 600, end: 660, title: "계약 협의" }, { day: "thu", start: 540, end: 1080, title: "외부 시스템 점검" }, { day: "fri", start: 600, end: 660, title: "영업 제안 미팅" }, { day: "fri", start: 1110, end: 1200, title: "고객사 미팅" }],
-  // 윤지은 (Product Designer) — 회의 적당, 오후 디자인 몰입, 회피 13~15.
-  u2: [{ day: "mon", start: 600, end: 660, title: "디자인 리뷰" }, { day: "tue", start: 900, end: 1020, title: "집중 업무" }, { day: "wed", start: 960, end: 1020, title: "디자인 리뷰" }, { day: "thu", start: 570, end: 630, title: "디자인 QA" }, { day: "fri", start: 660, end: 720, title: "디자인 리뷰" }, { day: "fri", start: 1050, end: 1110, title: "병원" }],
-  // 정지훈 (Head of Product) — 외부·의사결정 회의, 아침 조찬·늦은 만찬, 오전 회피 9~11.
-  u3: [{ day: "mon", start: 540, end: 600, title: "경영진 회의" }, { day: "tue", start: 780, end: 1020, title: "투자사 미팅" }, { day: "wed", start: 960, end: 1020, title: "채용 인터뷰" }, { day: "thu", start: 480, end: 570, title: "파트너사 조찬" }, { day: "thu", start: 1140, end: 1260, title: "저녁 만찬" }, { day: "fri", start: 600, end: 720, title: "채용 인터뷰" }],
-  // 박하린 (Backend) — 회의 최소·집중 많음(10~12·15~17), 새벽 배포·야간 온콜, 목요일은 종일 개발.
-  u4: [{ day: "mon", start: 330, end: 390, title: "새벽 배포" }, { day: "mon", start: 780, end: 840, title: "코드 리뷰" }, { day: "tue", start: 840, end: 900, title: "API 설계 리뷰" }, { day: "wed", start: 1080, end: 1170, title: "교육" }, { day: "fri", start: 780, end: 840, title: "API 설계 리뷰" }, { day: "fri", start: 1320, end: 1380, title: "야간 온콜" }],
-  // 박은주 (Product Designer) — 회의 가볍게, 오후 시안 작업 몰입(14~17 회피).
-  u5: [{ day: "mon", start: 600, end: 630, title: "디자인 리뷰" }, { day: "tue", start: 660, end: 690, title: "디자인 QA" }, { day: "tue", start: 900, end: 1020, title: "시안 작업" }, { day: "wed", start: 600, end: 630, title: "UX 싱크" }, { day: "wed", start: 1020, end: 1080, title: "브랜드 리뷰" }, { day: "thu", start: 660, end: 690, title: "디자인 리뷰" }, { day: "fri", start: 840, end: 960, title: "시안 작업" }],
+  // 김도현 (PM) — 일정 가볍게, 회피 15~16.
+  me: [{ day: "mon", start: 570, end: 630, title: "주간 스프린트 계획" }, { day: "wed", start: 600, end: 660, title: "분기 로드맵 리뷰" }, { day: "thu", start: 780, end: 840, title: "발표 준비" }],
+  // 이가영 (Sales) — 미팅 몇 개만.
+  u1: [{ day: "tue", start: 660, end: 720, title: "제품 데모" }, { day: "thu", start: 600, end: 660, title: "영업 제안 미팅" }],
+  // 윤지은 (Product Designer) — 회의 적당, 회피 13~15.
+  u2: [{ day: "mon", start: 600, end: 660, title: "디자인 리뷰" }, { day: "wed", start: 960, end: 1020, title: "디자인 리뷰" }],
+  // 정지훈 (Head of Product) — 의사결정 회의 몇 개, 오전 회피 9~11.
+  u3: [{ day: "mon", start: 540, end: 600, title: "경영진 회의" }, { day: "wed", start: 960, end: 1020, title: "채용 인터뷰" }, { day: "fri", start: 600, end: 720, title: "채용 인터뷰" }],
+  // 박하린 (Backend, 선택) — 회의 최소, 집중 15~17 회피.
+  u4: [{ day: "mon", start: 780, end: 840, title: "코드 리뷰" }, { day: "tue", start: 840, end: 900, title: "API 설계 리뷰" }],
+  // 박은주 (Product Designer, 선택) — 회의 가볍게, 14~17 회피.
+  u5: [{ day: "tue", start: 660, end: 690, title: "디자인 QA" }, { day: "fri", start: 840, end: 960, title: "시안 작업" }],
   // 최민재 (BE) — 코드리뷰·배포, 목 야간 배포
   u6: [{ day: "mon", start: 660, end: 720, title: "코드 리뷰" }, { day: "tue", start: 360, end: 420, title: "새벽 배포" }, { day: "tue", start: 840, end: 900, title: "API 설계 리뷰" }, { day: "wed", start: 810, end: 870, title: "코드 리뷰" }, { day: "thu", start: 600, end: 630, title: "스프린트 리뷰" }, { day: "thu", start: 1320, end: 1380, title: "야간 배포" }, { day: "fri", start: 900, end: 960, title: "코드 리뷰" }],
   // 한수아 (데이터 분석) — 지표·실험, 금 문서 작업
@@ -170,10 +178,8 @@ const SCHEDULES = {
 // avoid: 회의를 피하고 싶은/집중 시간대 (소프트 — "확인 필요"로 뜸). 분 단위.
 const CONSTRAINTS = {
   me: { avoid: [{ start: 900, end: 960 }] },                                // 김도현 회피 15:00~16:00
-  u2: { avoid: [{ start: 780, end: 900 }] },                                // 윤지은 회피 13:00~15:00
-  u3: { avoid: [{ start: 540, end: 660 }] },                                // 정지훈 오전 외부·의사결정 집중 9~11
-  u4: { avoid: [{ start: 600, end: 720 }, { start: 900, end: 1020 }] },     // 박하린 집중 10~12·15~17
-  u5: { avoid: [{ start: 840, end: 1020 }] },                               // 박은주 오후 시안 작업 몰입 14~17
+  u3: { avoid: [{ start: 540, end: 600 }] },                                // 정지훈 오전 집중 9~10
+  u5: { avoid: [{ start: 840, end: 900 }] },                                // 박은주 오후 시안 작업 14~15
   u7: { avoid: [{ start: 840, end: 960 }] },                                // 한수아 분석 집중 14~16
   u18: { avoid: [{ start: 600, end: 720 }] },                               // 곽민준 개발 집중 10~12
   u24: { avoid: [{ start: 780, end: 960 }] },                               // 노건우 모델 학습 집중 13~16
@@ -785,7 +791,7 @@ export default function MeetSlot() {
   const activeInBiz = aSlot != null && aSlot >= BIZ_START && aSlot + durMin <= BIZ_END;
   const activeLabel = active ? ((active.status === "ready" && !activeInBiz) ? "가능" : STATUS_LABEL[active.status]) : "";
   // 회의 구간 표시 문자열
-  const slotRangeLabel = aSlot != null ? `${slotLabel(aSlot)}–${slotLabel(aSlot + durMin)}` : "";
+  const slotRangeLabel = aSlot != null ? slotRangeShort(aSlot, aSlot + durMin) : "";
   // 추천 결과(다중): 선택된 것 = 프리미엄 카드, 나머지 = 보조 카드
   const recoPicks = recos && recos.picks ? recos.picks : [];
   // 추천 계산 조건 서명 (참석자/날짜/시간/옵션 변경 감지)
@@ -1316,7 +1322,7 @@ export default function MeetSlot() {
                           <button onClick={() => setActiveCell(null)} aria-label="접기" style={s.premiumCollapse}><img src="/icons/chevron-up.svg" width="18" height="18" alt="" /></button>
                         </div>
                         <div className="reco-headline-grad" style={s.premiumHeadlineBase}>{reasonHead}</div>
-                        <div style={s.premiumTime}>{fullDateLabel(dl)} · {slotLabel(p.start)}–{slotLabel(p.end)}</div>
+                        <div style={s.premiumTime}>{fullDateLabel(dl)} · {slotRangeShort(p.start, p.end)}</div>
                         <div style={s.dSub}>
                           <span style={{ ...s.dSubDot, background: STATUS[tierStatus(p.tier)].solid }} />
                           <span style={s.dSubText}>{recoDesc(p)}</span>
@@ -1324,14 +1330,14 @@ export default function MeetSlot() {
                       </div>
                       <div style={s.dDivider} />
                       <div style={s.dRows}>
-                        {(p.reqPref.length === 0 && p.optIssue.length === 0) ? (
-                          <Row label="참석자" value="모두 가능" />
-                        ) : (
-                          <>
-                            <Row label="필수 참석자" value={p.reqPref.length ? `${p.reqPref.map(nameOf).join(", ")} 확인 필요` : `${participants.filter((x) => x.required).length}명 전원 가능`} tone={p.reqPref.length ? "warn" : undefined} />
-                            <Row label="선택 참석자" value={p.optIssue.length ? `${p.optIssue.map(nameOf).join(", ")} 확인 필요` : (participants.some((x) => !x.required) ? "전원 가능" : "없음")} tone={p.optIssue.length ? "warn" : undefined} />
-                          </>
-                        )}
+                        <Row label="필수 참석자" value={`${participants.filter((x) => x.required).length}명 전원 가능`} />
+                        <Row label="선택 참석자" value={active.busyOptional.length ? `${active.busyOptional.map(nameOf).join(", ")} 불참 가능` : "전원 가능"} />
+                        {(() => {
+                          const focusIds = options.relaxPref ? [] : [...new Set([...active.prefConflicts, ...active.fieldwork])];
+                          const n = focusIds.length;
+                          return <Row label="확인 필요" value={n ? `${n}명` : "없음"} tone={n ? "warn" : undefined} />;
+                        })()}
+                        <Row label="회의실" value={active.roomsFree.length ? `${active.roomsFree.length}곳 가능` : "없음"} tone={active.roomsFree.length ? undefined : "danger"} />
                       </div>
                       {active.roomsFree.length > 0 ? (
                         <>
@@ -1352,13 +1358,13 @@ export default function MeetSlot() {
                           <div style={s.btnCol}>
                             <button style={s.copyBtn} onClick={openAsk}><img src="/icons/ask.svg" width="16" height="16" alt="" /><span style={s.copyBtnText}>동료에게 물어보기</span></button>
                             <button style={{ ...s.primaryBtn, background: pickedRoom ? T.blue : "#C9E2FF", cursor: pickedRoom ? "pointer" : "default" }} disabled={!pickedRoom}
-                              onClick={() => { const room = active.roomsFree.find((r) => r.id === pickedRoom); goToInfoStep({ dayLabel: `${fullDateLabel(dl)}`, timeLabel: `${slotLabel(p.start)}–${slotLabel(p.end)}`, room: room.floor ? `${room.name} (${room.floor})` : room.name }); }}>다음</button>
+                              onClick={() => { const room = active.roomsFree.find((r) => r.id === pickedRoom); goToInfoStep({ dayLabel: `${fullDateLabel(dl)}`, timeLabel: `${slotRangeShort(p.start, p.end)}`, room: room.floor ? `${room.name} (${room.floor})` : room.name }); }}>다음</button>
                           </div>
                         </>
                       ) : (
                         <>
                           <div style={s.dDivider} />
-                          <button style={s.onlineBtn} onClick={() => goToInfoStep({ dayLabel: `${fullDateLabel(dl)}`, timeLabel: `${slotLabel(p.start)}–${slotLabel(p.end)}`, room: "온라인" })}>
+                          <button style={s.onlineBtn} onClick={() => goToInfoStep({ dayLabel: `${fullDateLabel(dl)}`, timeLabel: `${slotRangeShort(p.start, p.end)}`, room: "온라인" })}>
                             <img src="/icons/online-btn.svg" width="16" height="16" alt="" /><span style={s.onlineBtnText}>온라인으로 잡기</span>
                           </button>
                         </>
