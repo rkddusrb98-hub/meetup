@@ -439,7 +439,7 @@ function recoTierOf(ev, participants, options) {
   const reqPref = prefIds.filter((id) => reqSet.has(id));                 // 필수 참석자 확인 필요(회피)
   const optPref = prefIds.filter((id) => !reqSet.has(id));
   const optIssue = [...new Set([...ev.busyOptional, ...optPref])];        // 선택 참석자 확인 필요(겹침·회피)
-  const hasRoom = ev.roomsFree.length > 0;
+  const hasRoom = (options && options.online) || ev.roomsFree.length > 0; // 온라인은 회의실 불필요
   let tier;
   if (reqPref.length === 0 && optIssue.length === 0 && hasRoom) tier = 1;
   else if (reqPref.length === 0 && optIssue.length > 0 && hasRoom) tier = 2;
@@ -479,7 +479,7 @@ function computeRecos(days, durMin, participants, options) {
     if (i === 0) { p.kind = "fast"; return; }
     if (p.tier !== 1) { p.kind = "status"; return; }
     // 기본 이유: 회의실 넉넉 > 시간대
-    p.kind = p.roomsN >= 3 ? "rooms" : (p.start < 720 ? "morning" : "afternoon");
+    p.kind = (!options.online && p.roomsN >= 3) ? "rooms" : (p.start < 720 ? "morning" : "afternoon");
   });
   // 나머지 가능 픽 중 '앞뒤 양쪽' 여유가 가장 큰 것(30분+)만 '여유' 이유로
   const restReady = picks.slice(1).filter((p) => p.tier === 1).sort((a, b) => b.bufMin - a.bufMin);
@@ -1348,9 +1348,17 @@ export default function MeetSlot() {
                           const n = focusIds.length;
                           return <Row label="확인 필요" value={n ? `${n}명` : "없음"} tone={n ? "warn" : undefined} />;
                         })()}
-                        <Row label="회의실" value={active.roomsFree.length ? `${active.roomsFree.length}곳 가능` : "없음"} tone={active.roomsFree.length ? undefined : "danger"} />
+                        {!options.online && <Row label="회의실" value={active.roomsFree.length ? `${active.roomsFree.length}곳 가능` : "없음"} tone={active.roomsFree.length ? undefined : "danger"} />}
                       </div>
-                      {active.roomsFree.length > 0 ? (
+                      {options.online ? (
+                        <>
+                          <div style={s.dDivider} />
+                          <div style={s.btnCol}>
+                            <button style={s.copyBtn} onClick={openAsk}><img src="/icons/ask.svg" width="16" height="16" alt="" /><span style={s.copyBtnText}>동료에게 물어보기</span></button>
+                            <button style={s.primaryBtn} onClick={() => goToInfoStep({ dayLabel: `${fullDateLabel(dl)}`, timeLabel: `${slotRangeShort(p.start, p.end)}`, room: "온라인" })}>다음</button>
+                          </div>
+                        </>
+                      ) : active.roomsFree.length > 0 ? (
                         <>
                           <div style={s.dDivider} />
                           <div style={s.roomList}>
@@ -1450,7 +1458,7 @@ export default function MeetSlot() {
                   const n = focusIds.length;
                   return <Row label="확인 필요" value={n ? `${n}명` : "없음"} tone={n ? "warn" : undefined} />;
                 })()}
-                <Row label="회의실" value={options.online ? "온라인" : (active.roomsFree.length ? `${active.roomsFree.length}곳 가능` : "없음")} tone={options.online ? undefined : (active.roomsFree.length ? undefined : "danger")} />
+                {!options.online && <Row label="회의실" value={active.roomsFree.length ? `${active.roomsFree.length}곳 가능` : "없음"} tone={active.roomsFree.length ? undefined : "danger"} />}
               </div>
               {options.online ? (
                 <>
