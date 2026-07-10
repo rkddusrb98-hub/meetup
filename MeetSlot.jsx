@@ -1699,10 +1699,10 @@ input:focus, select:focus { border-color: #3182F6 !important; box-shadow: inset 
 /* 캘린더 스크롤: 스크롤바가 레이아웃 공간을 예약하지 않게(좌우 패딩 대칭) — 스크롤은 그대로 동작 */
 .cal-scroll { scrollbar-width: none; }
 .cal-scroll::-webkit-scrollbar { width: 0; height: 0; }
-/* 입력 필드: 평소 기본 회색 1px, hover 파란 50%(굵기↑), focus 파란(hover와 동일 굵기). 모든 필드 동일 값 */
+/* 입력 필드: 굵기 1px 고정(텍스트 안 밀림), 색만 변함 — 평소 회색, hover 파란 50%, focus 파란. 모든 필드 동일 */
 .field { border-width: 1px; border-color: #E5E8EB; transition: border-color .15s ease; }
-.field:hover:not(:focus) { border-width: 1.5px; border-color: rgba(49,130,246,0.5); }
-.field:focus { border-width: 1.5px; border-color: #3182F6; }
+.field:hover:not(:focus) { border-color: rgba(49,130,246,0.5); }
+.field:focus { border-color: #3182F6; }
 /* 우측 추천 패널: 네이티브 스크롤바는 공간을 안 먹게 숨기고(좌우 패딩 대칭 유지), 커스텀 오버레이 thumb를 위에 얹는다 */
 .mss.mss-noscroll::-webkit-scrollbar { width: 0; height: 0; }
 .mss.mss-noscroll { scrollbar-width: none; }
