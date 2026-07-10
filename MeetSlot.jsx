@@ -1233,7 +1233,7 @@ export default function MeetSlot() {
 
           {/* 확정 → 추천계산 로딩 → 카드(추천/가능) → 빈 상태 */}
           {confirmed ? (
-            <div style={{ ...s.confirmBox, paddingTop: 40 }}>
+            <div style={{ ...s.confirmBox, paddingTop: 30 }}>
               <div style={s.confirmHead}>
                 <div style={s.confirmIcon}><img src="/icons/check-circle.svg" width="22" height="22" alt="" /></div>
                 <div style={s.confirmTitle}>회의가 잡혔어요</div>
