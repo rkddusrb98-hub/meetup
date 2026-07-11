@@ -1225,8 +1225,8 @@ export default function MeetSlot() {
           <div style={s.legend}>
             {["ready", "check", "adjust", "unfit"].map((k) => (
               <span key={k} style={s.legendItem}>
-                <span style={{ ...s.legendDot, background: STATUS[k].bg, border: `1.5px solid ${STATUS[k].border}` }} />
-                {STATUS_LABEL[k]}
+                <span style={{ ...s.legendDot, background: k === "ready" ? T.white : STATUS[k].bg, border: `1.5px solid ${k === "ready" ? T.gray200 : STATUS[k].border}` }} />
+                {k === "ready" ? "빈 시간 = 가능" : STATUS_LABEL[k]}
               </span>
             ))}
             <span style={s.legendItem}>
