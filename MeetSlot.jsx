@@ -1096,6 +1096,15 @@ export default function MeetSlot() {
             </div>
           </div>
 
+          <div style={s.legendTop}>
+            {["ready", "check", "adjust", "unfit"].map((k) => (
+              <span key={k} style={s.legendItem}>
+                <span style={{ ...s.legendDot, background: k === "ready" ? T.white : k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "ready" || k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
+                {k === "ready" ? "빈 시간 = 가능" : STATUS_LABEL[k]}
+              </span>
+            ))}
+          </div>
+
           <div className="cal-scroll" style={s.calWrap} ref={calScrollRef}>
             {/* 헤더: 요일 */}
             <div style={{ ...s.calHeadRow, gridTemplateColumns: `64px repeat(${days.length}, 1fr)` }}>
@@ -1222,14 +1231,6 @@ export default function MeetSlot() {
             </div>
           </div>
 
-          <div style={s.legend}>
-            {["ready", "check", "adjust", "unfit"].map((k) => (
-              <span key={k} style={s.legendItem}>
-                <span style={{ ...s.legendDot, background: k === "ready" ? T.white : k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "ready" || k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
-                {STATUS_LABEL[k]}
-              </span>
-            ))}
-          </div>
         </main>
 
         {/* 우측 */}
@@ -1892,6 +1893,7 @@ const s = {
   candDot: { width: 6, height: 6, borderRadius: "50%", flexShrink: 0 },
   candBlockLabel: { fontSize: 10, fontWeight: 800, letterSpacing: -0.4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
   legend: { display: "flex", gap: 16, flexWrap: "wrap", fontSize: 12, color: T.gray500, fontWeight: 600, paddingLeft: 4, flexShrink: 0 },
+  legendTop: { display: "flex", gap: 14, justifyContent: "flex-end", flexWrap: "wrap", fontSize: 12, color: T.gray500, fontWeight: 600, flexShrink: 0, marginTop: 6, paddingRight: 4 },
   legendItem: { display: "flex", alignItems: "center", gap: 6 },
   legendDot: { width: 13, height: 13, borderRadius: 5 },
 
