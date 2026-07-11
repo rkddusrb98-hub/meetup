@@ -811,7 +811,7 @@ export default function MeetSlot() {
   const offHours = active != null && aSlot != null && !activeInBiz && active.status !== "unfit";
   const activeDispStatus = active ? (offHours ? "check" : active.status) : null;
   const activeLabel = active ? STATUS_LABEL[activeDispStatus] : "";
-  const OFF_HOURS_HINT = "회사 정책상 근무 시간이 아니에요. 확인 후 잡는 걸 추천드려요";
+  const OFF_HOURS_HINT = "근무 시간이 아니에요. 확인 후 잡는 걸 추천드려요";
   // 회의 구간 표시 문자열. 단, 기존 일정(불가) 블록을 누른 경우엔 그 일정의 실제 시간대를 표시(블록 크기와 일치)
   const activeEvBlock = (active && active.status === "unfit" && aDay != null && aSlot != null)
     ? dayEventBlocks(participants, aDay).find((b) => b.start <= aSlot && aSlot < b.end)
