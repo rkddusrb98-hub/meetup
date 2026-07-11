@@ -1312,7 +1312,7 @@ export default function MeetSlot() {
                   </div>
                 </div>
               </div>
-              <button style={s.primaryBtn} onClick={() => { setConfirmed({ ...pendingConfirm, title: title.trim() || "회의", memo: memo.trim(), files: [...files] }); setPendingConfirm(null); setTitle(""); setMemo(""); setFiles([]); setTitleWarn(false); }}>확정하기</button>
+              <button style={s.primaryBtn} onClick={() => { setConfirmed({ ...pendingConfirm, title: title.trim() || "회의", memo: memo.trim(), files: [...files] }); setPendingConfirm(null); setActiveCell(null); setFromReco(false); setRecos(null); setPickedRoom(null); setTitle(""); setMemo(""); setFiles([]); setTitleWarn(false); }}>확정하기</button>
             </div>
           ) : recoLoading ? (
             <button className="reco-magic reco-loading" disabled style={{ ...s.recoBtn, border: "1px solid transparent", cursor: "default" }}>
