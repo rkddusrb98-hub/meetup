@@ -1225,13 +1225,10 @@ export default function MeetSlot() {
           <div style={s.legend}>
             {["ready", "check", "adjust", "unfit"].map((k) => (
               <span key={k} style={s.legendItem}>
-                <span style={{ ...s.legendDot, background: k === "ready" ? T.white : STATUS[k].bg, border: `1.5px solid ${k === "ready" ? T.gray200 : STATUS[k].border}` }} />
-                {k === "ready" ? "빈 시간 = 가능" : STATUS_LABEL[k]}
+                <span style={{ ...s.legendDot, background: k === "ready" ? T.white : k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "ready" || k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
+                {STATUS_LABEL[k]}
               </span>
             ))}
-            <span style={s.legendItem}>
-              <span style={{ ...s.legendDot, background: T.gray100, border: `1.5px solid ${T.gray200}` }} />기존 일정
-            </span>
           </div>
         </main>
 
