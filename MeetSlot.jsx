@@ -728,7 +728,7 @@ export default function MeetSlot() {
 
   // 날짜 피커 열기(임시선택 초기화)
   function openPicker() {
-    setDraft({ start: null, end: null });
+    setDraft({ start: rangeStart, end: rangeEnd }); // 이미 선택된 기간을 강조한 채로 열기
     setPickerMonth(new Date(rangeStart.getFullYear(), rangeStart.getMonth(), 1));
     setPickerOpen(true);
   }
