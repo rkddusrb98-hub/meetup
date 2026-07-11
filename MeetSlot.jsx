@@ -114,13 +114,13 @@ const SCHEDULES = {
   // 김도현 (PM) — 적당히 바쁨. 6명 공통 빈 슬롯은 월10·수13·금11만 남게 설계. 회피 15~16.
   me: [{ day: "mon", start: 660, end: 720, title: "1:1 미팅" }, { day: "mon", start: 780, end: 900, title: "제품 리뷰" }, { day: "mon", start: 960, end: 1080, title: "디자인 싱크" }, { day: "wed", start: 960, end: 1080, title: "고객사 미팅" }, { day: "fri", start: 780, end: 840, title: "발표 준비" }],
   // 이가영 (Sales)
-  u1: [{ day: "mon", start: 960, end: 1080, title: "고객사 방문" }, { day: "tue", start: 660, end: 720, title: "제품 데모" }, { day: "tue", start: 780, end: 840, title: "계약 협의" }, { day: "thu", start: 600, end: 720, title: "고객 미팅" }],
+  u1: [{ day: "mon", start: 960, end: 1080, title: "고객사 방문" }, { day: "tue", start: 660, end: 720, title: "제품 데모" }, { day: "tue", start: 780, end: 840, title: "계약 협의" }, { day: "thu", start: 600, end: 720, title: "고객 미팅" }, { day: "wed", start: 1320, end: 1380, title: "긴급 CS 대응" }],
   // 윤지은 (Product Designer) — 회피 13~15.
   u2: [{ day: "tue", start: 960, end: 1080, title: "집중 업무" }, { day: "wed", start: 600, end: 720, title: "디자인 워크숍" }, { day: "fri", start: 960, end: 1080, title: "디자인 리뷰" }],
   // 정지훈 (Head of Product) — 오전 회피 9~10.
-  u3: [{ day: "thu", start: 780, end: 840, title: "채용 인터뷰" }, { day: "thu", start: 1020, end: 1080, title: "저녁 브리핑" }, { day: "fri", start: 600, end: 660, title: "경영진 회의" }],
+  u3: [{ day: "thu", start: 780, end: 840, title: "채용 인터뷰" }, { day: "thu", start: 1020, end: 1080, title: "저녁 브리핑" }, { day: "fri", start: 600, end: 660, title: "경영진 회의" }, { day: "tue", start: 1260, end: 1320, title: "해외 파트너 콜" }],
   // 박하린 (Backend, 선택) — 회의 최소, 집중 15~17 회피.
-  u4: [{ day: "mon", start: 780, end: 840, title: "코드 리뷰" }, { day: "tue", start: 840, end: 900, title: "API 설계 리뷰" }],
+  u4: [{ day: "mon", start: 780, end: 840, title: "코드 리뷰" }, { day: "tue", start: 840, end: 900, title: "API 설계 리뷰" }, { day: "thu", start: 360, end: 420, title: "긴급 장애 대응" }],
   // 박은주 (Product Designer, 선택) — 회의 가볍게, 14~17 회피.
   u5: [{ day: "tue", start: 660, end: 690, title: "디자인 QA" }, { day: "fri", start: 840, end: 960, title: "시안 작업" }],
   // 최민재 (BE) — 코드리뷰·배포, 목 야간 배포
@@ -806,9 +806,12 @@ export default function MeetSlot() {
   const aDay = dayLabel ? dayLabel.key : null;
   // 항상 즉석 평가 (근무시간 밖·멀티주 모두 정확)
   const active = (aDay != null && aSlot != null) ? evaluateCandidate(aDay, aSlot, durMin, participants, options) : null;
-  // 근무시간 내 ready(색블록)는 "추천", 근무시간 밖 수동선택 ready는 "가능"
+  // 근무시간(9~18시) 밖 슬롯은 '확인 필요'로 표시 — 회사 정책상 근무시간 아님
   const activeInBiz = aSlot != null && aSlot >= BIZ_START && aSlot + durMin <= BIZ_END;
-  const activeLabel = active ? ((active.status === "ready" && !activeInBiz) ? "가능" : STATUS_LABEL[active.status]) : "";
+  const offHours = active != null && aSlot != null && !activeInBiz && active.status !== "unfit";
+  const activeDispStatus = active ? (offHours ? "check" : active.status) : null;
+  const activeLabel = active ? STATUS_LABEL[activeDispStatus] : "";
+  const OFF_HOURS_HINT = "회사 정책상 근무 시간이 아니에요. 확인 후 잡는 게 좋아요";
   // 회의 구간 표시 문자열. 단, 기존 일정(불가) 블록을 누른 경우엔 그 일정의 실제 시간대를 표시(블록 크기와 일치)
   const activeEvBlock = (active && active.status === "unfit" && aDay != null && aSlot != null)
     ? dayEventBlocks(participants, aDay).find((b) => b.start <= aSlot && aSlot < b.end)
@@ -1199,7 +1202,7 @@ export default function MeetSlot() {
                     })}
                     {/* 클릭해 잡은 슬롯 강조 — 색 블록(확인필요/회의실없음)에 없는 활성 슬롯(=가능 또는 근무시간 밖)을 여기서 렌더 */}
                     {aDi === di && aSlot != null && active && active.status !== "unfit" && !shownCandBlocks.some((b) => b.start === aSlot) && (() => {
-                      const tok = STATUS[active.status];
+                      const tok = STATUS[activeDispStatus];
                       const top = ((aSlot - DAY_START) / SLOT) * SLOT_PX;
                       const height = (durMin / SLOT) * SLOT_PX;
                       const short = height <= 40;
@@ -1448,14 +1451,15 @@ export default function MeetSlot() {
             ) : (
             <div style={s.detailBox}>
               <div style={s.dHead}>
-                <span style={{ ...s.dTag, background: CARD_TAG[active.status].bg, color: CARD_TAG[active.status].text }}>
-                  <span style={{ ...s.dTagDot, background: CARD_TAG[active.status].dot }} />
+                <span style={{ ...s.dTag, background: CARD_TAG[activeDispStatus].bg, color: CARD_TAG[activeDispStatus].text }}>
+                  <span style={{ ...s.dTagDot, background: CARD_TAG[activeDispStatus].dot }} />
                   {activeLabel}
                 </span>
                 <div style={s.dTitle}>{fullDateLabel(dayLabel)} · {slotRangeLabel}</div>
                 <div style={s.dSub}>
-                  <span style={{ ...s.dSubDot, background: CARD_TAG[active.status].dot }} />
+                  <span style={{ ...s.dSubDot, background: CARD_TAG[activeDispStatus].dot }} />
                   <span style={s.dSubText}>{(() => {
+                    if (offHours) return OFF_HOURS_HINT;
                     if (active.status !== "check") return STATUS_HINT[active.status];
                     const focusIds = options.relaxPref ? [] : [...new Set([...active.prefConflicts, ...active.fieldwork])];
                     if (focusIds.length) return `${focusIds.map(nameOf).join(", ")}님이 이 시간을 회의를 피하고 싶은 시간으로 설정했어요`;
