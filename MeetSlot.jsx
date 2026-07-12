@@ -1176,17 +1176,21 @@ export default function MeetSlot() {
                     onMouseMove={(e) => { const st = hoverSlotAt(d, e.clientY, e.currentTarget); setHoverCell(st != null ? { col: di, day: d.key, start: st } : null); }}
                     onMouseLeave={() => setHoverCell((h) => (h && h.col === di ? null : h))}
                     onClick={() => { if (hoverCell && hoverCell.col === di) openCell(`${di}-${hoverCell.start}`); }}>
-                    {/* '가능' 블록 (연한 파랑, 회의 길이 단위) — 텍스트 없이 블록만. 클릭은 아래 hover 프리뷰가 30분 단위로 처리 */}
+                    {/* '가능' 블록 (은은한 반투명 파랑 + '가능' 라벨) — 클릭은 아래 hover 프리뷰가 30분 단위로 처리 */}
                     {readyBlocks.map((b, i) => {
                       const top = ((b.start - DAY_START) / SLOT) * SLOT_PX;
                       const height = ((b.end - b.start) / SLOT) * SLOT_PX;
+                      const short = height <= 40;
                       return (
-                        <div key={"r" + i} style={{ position: "absolute", left: 3, right: 3, top: top + 1.5, height: height - 3, background: T.blueBg, borderRadius: 7, zIndex: 1, pointerEvents: "none" }} />
+                        <div key={"r" + i} style={{ ...s.candBlock, top: top + 1.5, height: height - 3, padding: short ? "0 9px" : "10px 9px 7px", alignItems: short ? "center" : "flex-start", background: T.blueBg, zIndex: 1, pointerEvents: "none" }}>
+                          <span style={{ ...s.candBlockDot, background: STATUS.ready.solid, marginTop: short ? 0 : 4 }} />
+                          <span style={{ ...s.candBlockLabel, color: STATUS.ready.text }}>가능</span>
+                        </div>
                       );
                     })}
-                    {/* hover 프리뷰 (회의 길이만큼) — 가능 블록 위에서 구분되게 한 톤 진한 파랑 */}
+                    {/* hover 프리뷰 (회의 길이만큼) — 가능 블록 위에서 은은하게 */}
                     {hoverCell && hoverCell.col === di && (
-                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: (hoverCell.start >= BIZ_START && hoverCell.start + durMin <= BIZ_END) ? "rgba(147, 194, 255, 0.5)" : "rgba(178, 184, 193, 0.5)", borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
+                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: (hoverCell.start >= BIZ_START && hoverCell.start + durMin <= BIZ_END) ? "rgba(147, 194, 255, 0.35)" : "rgba(178, 184, 193, 0.3)", borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
                     )}
                     {/* 기존 일정 블록 (회색, 시간대별 요약) — 후보 블록과 겹치는 건 제외 */}
                     {shownEvBlocks.map((b, i) => {
