@@ -1470,7 +1470,7 @@ export default function MeetSlot() {
                       })}
                   </div>
                 </div>
-                <button style={s.copyBtn} onClick={openAdjust}><img src="/icons/ask.svg" width="16" height="16" alt="" /><span style={s.copyBtnText}>조정 요청하기</span></button>
+                <button style={s.adjustBtn} onClick={openAdjust}><img src="/icons/ask-gray.svg" width="16" height="16" alt="" /><span style={s.onlineBtnText}>조정 요청하기</span></button>
               </div>
             ) : (
             <div style={s.detailBox}>
@@ -2033,6 +2033,7 @@ const s = {
   copyBtn: { width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "15px 0", background: "#E8F3FF", borderRadius: 13, cursor: "pointer" },
   copyBtnText: { fontSize: 14, fontWeight: 700, lineHeight: "16px", letterSpacing: -0.28, color: "#3182F6" },
   onlineBtn: { width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "15px 0", background: "#F2F4F6", borderRadius: 13, cursor: "pointer" },
+  adjustBtn: { width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "15px 0", background: "#F9FAFB", borderRadius: 13, cursor: "pointer" },
   onlineBtnText: { fontSize: 14, fontWeight: 700, lineHeight: "16px", letterSpacing: -0.28, color: "#4E5968" },
   busyBox: { background: "#F9FAFB", borderRadius: 12, padding: 14, display: "flex", flexDirection: "column", gap: 12, width: "100%" },
   busyLabel: { fontSize: 12, fontWeight: 700, lineHeight: "14px", letterSpacing: -0.24, color: "#8B95A1" },
