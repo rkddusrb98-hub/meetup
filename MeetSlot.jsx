@@ -1126,7 +1126,7 @@ export default function MeetSlot() {
           <div style={s.legendTop}>
             {["ready", "check", "adjust", "unfit"].map((k) => (
               <span key={k} style={s.legendItem}>
-                <span style={{ ...s.legendDot, background: k === "ready" ? T.blueBgSoft : k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
+                <span style={{ ...s.legendDot, background: k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
                 {STATUS_LABEL[k]}
               </span>
             ))}
@@ -1171,7 +1171,14 @@ export default function MeetSlot() {
                 const shownEvBlocks = evBlocks.filter((eb) => !candBlocks.some((cb) => cb.start < eb.end && eb.start < cb.end));
                 const shownCandBlocks = candBlocks.filter((b) => b.status !== "ready");
                 // '가능'은 정각 단위(회의 길이) 파랑 블록으로 시각 안내. 클릭/선택은 아래 hover 로직이 30분 단위로 처리하므로 pointerEvents 없음.
-                const readyBlocks = candBlocks.filter((b) => b.status === "ready");
+                // 인접한 '가능' 슬롯을 하나의 큰 블록으로 병합 → 큰 블록 하나에 '가능' 라벨 하나
+                const readyBlocks = candBlocks.filter((b) => b.status === "ready").sort((a, b) => a.start - b.start)
+                  .reduce((acc, rb) => {
+                    const last = acc[acc.length - 1];
+                    if (last && last.end >= rb.start) last.end = Math.max(last.end, rb.end);
+                    else acc.push({ start: rb.start, end: rb.end });
+                    return acc;
+                  }, []);
                 return (
                   <div key={`${d.key}-${di}`}
                     style={{ ...s.calCol, opacity: d.isPast ? 0.5 : 1, cursor: (hoverCell && hoverCell.col === di) ? "pointer" : "default" }}
@@ -1184,9 +1191,9 @@ export default function MeetSlot() {
                       const height = ((b.end - b.start) / SLOT) * SLOT_PX;
                       const short = height <= 40;
                       return (
-                        <div key={"r" + i} style={{ ...s.candBlock, top: top + 1.5, height: height - 3, padding: short ? "0 9px" : "10px 9px 7px", alignItems: short ? "center" : "flex-start", background: T.blueBgSoft, zIndex: 1, pointerEvents: "none" }}>
-                          <span style={{ ...s.candBlockDot, background: "#A9CDFF", marginTop: short ? 0 : 4 }} />
-                          <span style={{ ...s.candBlockLabel, color: "#8FAAD6" }}>가능</span>
+                        <div key={"r" + i} style={{ ...s.candBlock, top: top + 1.5, height: height - 3, padding: short ? "0 9px" : "10px 9px 7px", alignItems: short ? "center" : "flex-start", background: T.blueBg, zIndex: 1, pointerEvents: "none" }}>
+                          <span style={{ ...s.candBlockDot, background: STATUS.ready.solid, marginTop: short ? 0 : 4 }} />
+                          <span style={{ ...s.candBlockLabel, color: STATUS.ready.text }}>가능</span>
                         </div>
                       );
                     })}
