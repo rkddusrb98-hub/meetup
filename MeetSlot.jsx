@@ -1124,7 +1124,7 @@ export default function MeetSlot() {
           <div style={s.legendTop}>
             {["ready", "check", "adjust", "unfit"].map((k) => (
               <span key={k} style={s.legendItem}>
-                <span style={{ ...s.legendDot, background: k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
+                <span style={{ ...s.legendDot, background: k === "ready" ? T.blueBgSoft : k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
                 {STATUS_LABEL[k]}
               </span>
             ))}
@@ -1176,16 +1176,12 @@ export default function MeetSlot() {
                     onMouseMove={(e) => { const st = hoverSlotAt(d, e.clientY, e.currentTarget); setHoverCell(st != null ? { col: di, day: d.key, start: st } : null); }}
                     onMouseLeave={() => setHoverCell((h) => (h && h.col === di ? null : h))}
                     onClick={() => { if (hoverCell && hoverCell.col === di) openCell(`${di}-${hoverCell.start}`); }}>
-                    {/* '가능' 블록 (파랑, 회의 길이 단위) — 시각 안내용, 클릭은 아래 hover 프리뷰가 30분 단위로 처리 */}
+                    {/* '가능' 블록 (연한 파랑, 회의 길이 단위) — 텍스트 없이 블록만. 클릭은 아래 hover 프리뷰가 30분 단위로 처리 */}
                     {readyBlocks.map((b, i) => {
                       const top = ((b.start - DAY_START) / SLOT) * SLOT_PX;
                       const height = ((b.end - b.start) / SLOT) * SLOT_PX;
-                      const short = height <= 40;
                       return (
-                        <div key={"r" + i} style={{ ...s.candBlock, top: top + 1.5, height: height - 3, padding: short ? "0 9px" : "10px 9px 7px", alignItems: short ? "center" : "flex-start", background: STATUS.ready.bg, zIndex: 1, pointerEvents: "none" }}>
-                          <span style={{ ...s.candBlockDot, background: STATUS.ready.solid, marginTop: short ? 0 : 4 }} />
-                          <span style={{ ...s.candBlockLabel, color: STATUS.ready.text }}>가능</span>
-                        </div>
+                        <div key={"r" + i} style={{ position: "absolute", left: 3, right: 3, top: top + 1.5, height: height - 3, background: T.blueBgSoft, borderRadius: 7, zIndex: 1, pointerEvents: "none" }} />
                       );
                     })}
                     {/* hover 프리뷰 (회의 길이만큼) — 가능 블록 위에서 구분되게 한 톤 진한 파랑 */}
