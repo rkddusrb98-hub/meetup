@@ -616,7 +616,7 @@ export default function MeetSlot() {
     const onUp = () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); document.body.style.cursor = ""; document.body.style.userSelect = ""; };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
-    document.body.style.cursor = "url('/cursors/resize.svg') 13 8, col-resize"; document.body.style.userSelect = "none";
+    document.body.style.cursor = "url('/cursors/resize.svg') 15 9, col-resize"; document.body.style.userSelect = "none";
   }
   // 필수/선택 안내 툴팁: 아이콘 클릭 토글. 위치는 fixed(패널 overflow에 안 잘리게)로 클릭 시 계산.
   function toggleTip(e) {
@@ -1826,7 +1826,7 @@ button:focus-visible:not(.field) { outline: 2px solid ${T.blue}; outline-offset:
 .att-x { color: #B0B8C1; background: transparent; transition: color .15s ease, background .15s ease; }
 .att-x:hover { background: #E5E8EB; color: #98A2B3; }
 /* 헤더 네비 탭 hover */
-.rz-handle { position: absolute; top: 0; bottom: 0; width: 9px; cursor: url('/cursors/resize.svg') 13 8, col-resize; z-index: 40; display: flex; align-items: center; justify-content: center; }
+.rz-handle { position: absolute; top: 0; bottom: 0; width: 9px; cursor: url('/cursors/resize.svg') 15 9, col-resize; z-index: 40; display: flex; align-items: center; justify-content: center; }
 .rz-handle::before { content: ""; width: 3px; height: 46px; border-radius: 3px; background: transparent; transition: background .15s ease; }
 .rz-handle:hover::before { background: #A6BEE0; }
 .info-tip { position: relative; display: inline-flex; align-items: center; margin-left: -1px; }
