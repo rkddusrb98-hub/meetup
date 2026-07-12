@@ -1124,8 +1124,8 @@ export default function MeetSlot() {
           <div style={s.legendTop}>
             {["ready", "check", "adjust", "unfit"].map((k) => (
               <span key={k} style={s.legendItem}>
-                <span style={{ ...s.legendDot, background: k === "ready" ? T.white : k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "ready" || k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
-                {k === "ready" ? "빈 시간 = 가능" : STATUS_LABEL[k]}
+                <span style={{ ...s.legendDot, background: k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
+                {STATUS_LABEL[k]}
               </span>
             ))}
           </div>
@@ -1167,21 +1167,30 @@ export default function MeetSlot() {
                 const candBlocks = d.isPast ? [] : dayCandidateBlocks(d.key, durMin, participants, options).filter((b) => !(isToday && b.start < NOW_MIN));
                 // 후보 블록(색블록)이 이미 그 시간대 상태를 표시하므로, 겹치는 회색 일정 블록은 숨긴다 → 회색이 뒤로 삐져나오는 이중표시 방지
                 const shownEvBlocks = evBlocks.filter((eb) => !candBlocks.some((cb) => cb.start < eb.end && eb.start < cb.end));
-                // '가능'(파랑)은 블록으로 깔지 않음 — 빈 공간을 클릭해 원하는 30분 시작으로 직접 잡게. 확인필요/회의실없음만 블록 표시.
                 const shownCandBlocks = candBlocks.filter((b) => b.status !== "ready");
+                // '가능'은 정각 단위(회의 길이) 파랑 블록으로 시각 안내. 클릭/선택은 아래 hover 로직이 30분 단위로 처리하므로 pointerEvents 없음.
+                const readyBlocks = candBlocks.filter((b) => b.status === "ready");
                 return (
                   <div key={`${d.key}-${di}`}
                     style={{ ...s.calCol, opacity: d.isPast ? 0.5 : 1, cursor: (hoverCell && hoverCell.col === di) ? "pointer" : "default" }}
                     onMouseMove={(e) => { const st = hoverSlotAt(d, e.clientY, e.currentTarget); setHoverCell(st != null ? { col: di, day: d.key, start: st } : null); }}
                     onMouseLeave={() => setHoverCell((h) => (h && h.col === di ? null : h))}
                     onClick={() => { if (hoverCell && hoverCell.col === di) openCell(`${di}-${hoverCell.start}`); }}>
-                    {/* 근무시간(9~18) 가능 존 — 빈 곳이 '가능'임을 옅은 파랑으로 인지시킴(색·일정 블록이 위를 덮음) */}
-                    {!d.isPast && (
-                      <div style={{ position: "absolute", left: 3, right: 3, top: ((BIZ_START - DAY_START) / SLOT) * SLOT_PX + 1.5, height: ((BIZ_END - BIZ_START) / SLOT) * SLOT_PX - 3, background: T.blueBgSoft, borderRadius: 7, pointerEvents: "none", zIndex: 0 }} />
-                    )}
-                    {/* hover 프리뷰 (회의 길이만큼) — 가능 존 위에서 살짝 더 진한 파랑 */}
+                    {/* '가능' 블록 (파랑, 회의 길이 단위) — 시각 안내용, 클릭은 아래 hover 프리뷰가 30분 단위로 처리 */}
+                    {readyBlocks.map((b, i) => {
+                      const top = ((b.start - DAY_START) / SLOT) * SLOT_PX;
+                      const height = ((b.end - b.start) / SLOT) * SLOT_PX;
+                      const short = height <= 40;
+                      return (
+                        <div key={"r" + i} style={{ ...s.candBlock, top: top + 1.5, height: height - 3, padding: short ? "0 9px" : "10px 9px 7px", alignItems: short ? "center" : "flex-start", background: STATUS.ready.bg, zIndex: 1, pointerEvents: "none" }}>
+                          <span style={{ ...s.candBlockDot, background: STATUS.ready.solid, marginTop: short ? 0 : 4 }} />
+                          <span style={{ ...s.candBlockLabel, color: STATUS.ready.text }}>가능</span>
+                        </div>
+                      );
+                    })}
+                    {/* hover 프리뷰 (회의 길이만큼) — 가능 블록 위에서 구분되게 한 톤 진한 파랑 */}
                     {hoverCell && hoverCell.col === di && (
-                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: T.blueBg, borderRadius: 7, pointerEvents: "none", zIndex: 1 }} />
+                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: "#C9E2FF", borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
                     )}
                     {/* 기존 일정 블록 (회색, 시간대별 요약) — 후보 블록과 겹치는 건 제외 */}
                     {shownEvBlocks.map((b, i) => {
