@@ -1191,7 +1191,7 @@ export default function MeetSlot() {
                       const height = ((b.end - b.start) / SLOT) * SLOT_PX;
                       const short = height <= 40;
                       return (
-                        <div key={"r" + i} style={{ ...s.candBlock, top: top + 1.5, height: height - 3, padding: short ? "0 9px" : "10px 9px 7px", alignItems: short ? "center" : "flex-start", background: T.blueBg, zIndex: 1, pointerEvents: "none" }}>
+                        <div key={"r" + i} style={{ ...s.candBlock, top: top + 1.5, height: height - 3, padding: short ? "0 9px" : "10px 9px 7px", alignItems: short ? "center" : "flex-start", background: "rgba(232, 243, 255, 0.6)", zIndex: 1, pointerEvents: "none" }}>
                           <span style={{ ...s.candBlockDot, background: STATUS.ready.solid, marginTop: short ? 0 : 4 }} />
                           <span style={{ ...s.candBlockLabel, color: STATUS.ready.text }}>가능</span>
                         </div>
