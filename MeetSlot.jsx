@@ -1190,7 +1190,7 @@ export default function MeetSlot() {
                     })}
                     {/* hover 프리뷰 (회의 길이만큼) — 가능 블록 위에서 은은하게 */}
                     {hoverCell && hoverCell.col === di && (
-                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: (hoverCell.start >= BIZ_START && hoverCell.start + durMin <= BIZ_END) ? "rgba(147, 194, 255, 0.35)" : "rgba(178, 184, 193, 0.3)", borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
+                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: (hoverCell.start >= BIZ_START && hoverCell.start + durMin <= BIZ_END) ? "rgba(147, 194, 255, 0.18)" : "rgba(178, 184, 193, 0.15)", borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
                     )}
                     {/* 기존 일정 블록 (회색, 시간대별 요약) — 후보 블록과 겹치는 건 제외 */}
                     {shownEvBlocks.map((b, i) => {
