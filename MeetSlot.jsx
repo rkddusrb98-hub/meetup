@@ -1126,7 +1126,7 @@ export default function MeetSlot() {
           <div style={s.legendTop}>
             {["ready", "check", "adjust", "unfit"].map((k) => (
               <span key={k} style={s.legendItem}>
-                <span style={{ ...s.legendDot, background: k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
+                <span style={{ ...s.legendDot, background: k === "ready" ? T.blueBgSoft : k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
                 {STATUS_LABEL[k]}
               </span>
             ))}
@@ -1184,9 +1184,9 @@ export default function MeetSlot() {
                       const height = ((b.end - b.start) / SLOT) * SLOT_PX;
                       const short = height <= 40;
                       return (
-                        <div key={"r" + i} style={{ ...s.candBlock, top: top + 1.5, height: height - 3, padding: short ? "0 9px" : "10px 9px 7px", alignItems: short ? "center" : "flex-start", background: T.blueBg, zIndex: 1, pointerEvents: "none" }}>
-                          <span style={{ ...s.candBlockDot, background: STATUS.ready.solid, marginTop: short ? 0 : 4 }} />
-                          <span style={{ ...s.candBlockLabel, color: STATUS.ready.text }}>가능</span>
+                        <div key={"r" + i} style={{ ...s.candBlock, top: top + 1.5, height: height - 3, padding: short ? "0 9px" : "10px 9px 7px", alignItems: short ? "center" : "flex-start", background: T.blueBgSoft, zIndex: 1, pointerEvents: "none" }}>
+                          <span style={{ ...s.candBlockDot, background: "#A9CDFF", marginTop: short ? 0 : 4 }} />
+                          <span style={{ ...s.candBlockLabel, color: "#8FAAD6" }}>가능</span>
                         </div>
                       );
                     })}
