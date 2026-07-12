@@ -975,7 +975,7 @@ export default function MeetSlot() {
       </header>
 
       <div style={{ ...s.body, gridTemplateColumns: `288px minmax(0, 1fr) ${rightW}px`, position: "relative" }}>
-        <div className="rz-handle" onMouseDown={startResize} title="드래그해서 오른쪽 패널 폭 조절" style={{ right: rightW - 3 }} />
+        <div className="rz-handle" onMouseDown={startResize} style={{ right: rightW - 3 }} />
         {/* 좌측 */}
         <aside className="mss" style={s.left}>
           {/* 상단 폼: 회의방식 탭 → 회의명 → 회의 길이 → 날짜 (라벨/타이틀 없음, gap 16) */}
