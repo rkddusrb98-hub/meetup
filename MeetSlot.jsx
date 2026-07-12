@@ -867,8 +867,8 @@ export default function MeetSlot() {
     let eh = Math.floor(end / 60) % 12; if (eh === 0) eh = 12;
     const endStr = endAp === startAp ? `${eh}:${String(end % 60).padStart(2, "0")}` : slotLabel(end);
     return [
-      `${dateStr} ${slotLabel(start)}–${endStr}에 회의를 잡으려고 해요.`,
-      "이 시간에 다른 일정이 있으신데, 혹시 조정 가능하실까요?",
+      "가능한 회의 시간을 찾지 못해, 일정 조정이 가능하실지 여쭤보고 있어요. 아래 시간 괜찮으실까요?",
+      `${dateStr} ${slotLabel(start)}–${endStr}`,
       "어려우시면 편하게 말씀해주세요.",
     ].join("\n");
   }
