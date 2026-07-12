@@ -653,8 +653,10 @@ export default function MeetSlot() {
   const [pickerMonth, setPickerMonth] = useState(new Date(TODAY.getFullYear(), TODAY.getMonth(), 1));
   // 동료에게 물어보기 모달
   const [askOpen, setAskOpen] = useState(false);
-  const [askIds, setAskIds] = useState([]); // 물어볼 참석자 id (기본 전체)
+  const [askIds, setAskIds] = useState([]); // 물어볼/요청할 대상 id (기본 전체)
   const [askMsg, setAskMsg] = useState("");
+  const [askMode, setAskMode] = useState("ask"); // "ask"(동료에게 물어보기) | "adjust"(조정 요청)
+  const [askPool, setAskPool] = useState([]);    // 모달에 보여줄 대상 후보 id 목록
   const [askToast, setAskToast] = useState(false); // 보냈어요 상단 토스트
   const [focusedField, setFocusedField] = useState(null); // 포커스된 입력필드 (삭제 아이콘 표시용)
   const [deptOpen, setDeptOpen] = useState(false); // 직군 드롭다운 열림
@@ -854,13 +856,36 @@ export default function MeetSlot() {
       "어려우시면 편하게 말씀해주세요.",
     ].join("\n");
   }
+  // 조정 요청용 메시지 초안 — 겹치는 일정을 조정해줄 수 있는지 묻는 톤
+  function buildAdjustText() {
+    if (!dayLabel || aSlot == null) return "";
+    const month = dayLabel.dateObj.getMonth() + 1;
+    const dateStr = `${month}월 ${dayLabel.date}일(${dayLabel.label})`;
+    const start = aSlot, end = aSlot + durMin;
+    const startAp = Math.floor(start / 60) < 12 ? "오전" : "오후";
+    const endAp = Math.floor(end / 60) < 12 ? "오전" : "오후";
+    let eh = Math.floor(end / 60) % 12; if (eh === 0) eh = 12;
+    const endStr = endAp === startAp ? `${eh}:${String(end % 60).padStart(2, "0")}` : slotLabel(end);
+    return [
+      `${dateStr} ${slotLabel(start)}–${endStr}에 회의를 잡으려고 해요.`,
+      "이 시간에 다른 일정이 있으신데, 혹시 조정 가능하실까요?",
+      "어려우시면 편하게 말씀해주세요.",
+    ].join("\n");
+  }
   function openAsk() {
-    setAskIds(participants.map((p) => p.id)); // 전체 선택이 디폴트
+    const ids = participants.map((p) => p.id);
+    setAskMode("ask"); setAskPool(ids); setAskIds(ids); // 전체 선택이 디폴트
     setAskMsg(buildAskText());
     setAskOpen(true);
   }
+  function openAdjust() {
+    const blockers = participants.filter((p) => personBusy(p.id, aDay, aSlot, aSlot + durMin)).map((p) => p.id);
+    setAskMode("adjust"); setAskPool(blockers); setAskIds(blockers); // 막는 참석자 전원이 기본 대상
+    setAskMsg(buildAdjustText());
+    setAskOpen(true);
+  }
   function toggleAskId(id) { setAskIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id])); }
-  function toggleAskAll() { setAskIds((prev) => (prev.length === participants.length ? [] : participants.map((p) => p.id))); }
+  function toggleAskAll() { setAskIds((prev) => (prev.length === askPool.length ? [] : [...askPool])); }
   function sendAsk() {
     if (!askIds.length) return;
     setAskOpen(false);
@@ -1445,6 +1470,7 @@ export default function MeetSlot() {
                       })}
                   </div>
                 </div>
+                <button style={s.copyBtn} onClick={openAdjust}><img src="/icons/ask.svg" width="16" height="16" alt="" /><span style={s.copyBtnText}>조정 요청하기</span></button>
               </div>
             ) : (
             <div style={s.detailBox}>
@@ -1586,32 +1612,42 @@ export default function MeetSlot() {
         <div style={s.modalBackdrop} onMouseDown={(e) => { if (e.target === e.currentTarget) setAskOpen(false); }}>
           <div style={s.modalCard} role="dialog" aria-modal="true">
             <div style={s.modalHead}>
-              <span style={s.modalTitle}>동료에게 물어보기</span>
+              <span style={s.modalTitle}>{askMode === "adjust" ? "조정 요청하기" : "동료에게 물어보기"}</span>
               <button style={s.modalClose} onClick={() => setAskOpen(false)} aria-label="닫기">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="#6B7684" strokeWidth="2" strokeLinecap="round" /></svg>
               </button>
             </div>
+            {askPool.length > 1 ? (
             <div style={s.askSection}>
               <div style={s.askSecLabel}>
-                <span>참석자 <span style={s.askSecCount}>{askIds.length}명</span></span>
-                <button style={s.askAllBtn} onClick={toggleAskAll}>{askIds.length === participants.length ? "전체 해제" : "전체 선택"}</button>
+                <span>{askMode === "adjust" ? "요청 대상" : "참석자"} <span style={s.askSecCount}>{askIds.length}명</span></span>
+                <button style={s.askAllBtn} onClick={toggleAskAll}>{askIds.length === askPool.length ? "전체 해제" : "전체 선택"}</button>
               </div>
               <div style={s.askList}>
-                {participants.map((p) => {
-                  const on = askIds.includes(p.id);
+                {askPool.map((id) => {
+                  const on = askIds.includes(id);
                   return (
-                    <button key={p.id} style={s.askRow} onClick={() => toggleAskId(p.id)}>
-                      <Avatar id={p.id} box={s.askAvatar} />
-                      <span style={s.askName}>{nameOf(p.id)}{p.id === "me" ? " (나)" : ""}</span>
+                    <button key={id} style={s.askRow} onClick={() => toggleAskId(id)}>
+                      <Avatar id={id} box={s.askAvatar} />
+                      <span style={s.askName}>{nameOf(id)}{id === "me" ? " (나)" : ""}</span>
                       <span style={{ ...s.askCheck, ...(on ? s.askCheckOn : {}) }}>{on && <img src="/icons/check.svg" width="11" height="11" alt="" />}</span>
                     </button>
                   );
                 })}
               </div>
             </div>
+            ) : askPool.length === 1 ? (
+            <div style={s.askSection}>
+              <div style={s.askSecLabel}><span>요청 대상</span></div>
+              <div style={{ ...s.askRow, cursor: "default" }}>
+                <Avatar id={askPool[0]} box={s.askAvatar} />
+                <span style={s.askName}>{nameOf(askPool[0])}{askPool[0] === "me" ? " (나)" : ""}</span>
+              </div>
+            </div>
+            ) : null}
             <div style={s.askSection}>
               <div style={s.askSecLabel}><span>메시지</span></div>
-              <textarea className="mss field" style={s.askTextarea} value={askMsg} onChange={(e) => setAskMsg(e.target.value)} placeholder="물어볼 내용을 적어주세요" />
+              <textarea className="mss field" style={s.askTextarea} value={askMsg} onChange={(e) => setAskMsg(e.target.value)} placeholder={askMode === "adjust" ? "조정 요청 내용을 적어주세요" : "물어볼 내용을 적어주세요"} />
             </div>
             <button style={{ ...s.primaryBtn, ...(askIds.length ? {} : { background: "#C9E2FF", cursor: "default" }) }} disabled={!askIds.length} onClick={sendAsk}>보내기</button>
           </div>
@@ -1620,7 +1656,7 @@ export default function MeetSlot() {
       {askToast && (
         <div style={s.askToast}>
           <span style={s.askToastIcon}><Icon.check style={{ color: "#FFF", width: 12, height: 12 }} /></span>
-          <span style={s.askToastText}>일정 조율 메시지를 보냈어요.</span>
+          <span style={s.askToastText}>{askMode === "adjust" ? "조정 요청을 보냈어요." : "일정 조율 메시지를 보냈어요."}</span>
         </div>
       )}
     </div>
