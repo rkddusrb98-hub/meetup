@@ -951,7 +951,9 @@ export default function MeetSlot() {
     const start = DAY_START + Math.floor((clientY - rect.top) / SLOT_PX) * SLOT;
     if (start < DAY_START || start + durMin > DAY_END) return null;
     if (ymd(d.dateObj) === ymd(TODAY) && start < NOW_MIN) return null; // 오늘 지난 시간 제외
-    if (participants.some((p) => personBusy(p.id, d.key, start, start + durMin))) return null; // 기존 일정 겹침
+    // 가능(ready) 시간에만 hover 프리뷰 — 확인필요/회의실없음/겹침 슬롯 위/아래로 삐져나오지 않게
+    const ev = evaluateCandidate(d.key, start, durMin, participants, options);
+    if (!ev || ev.status !== "ready") return null;
     return start;
   }
 
