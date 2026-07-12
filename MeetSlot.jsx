@@ -958,6 +958,10 @@ export default function MeetSlot() {
   }
 
   const good = counts.ready > 0;
+  // 오른쪽 패널이 최소 폭 근처면 날짜·시간 타이틀을 줄여 2줄로 안 넘어가게
+  const compactPanel = rightW < 340; // 기본폭(340)보다 좁아지면 날짜·시간이 2줄 되므로 그때만 축소
+  const dTitleC = compactPanel ? { ...s.dTitle, fontSize: 14, whiteSpace: "nowrap" } : s.dTitle;
+  const premiumTimeC = compactPanel ? { ...s.premiumTime, fontSize: 14, whiteSpace: "nowrap" } : s.premiumTime;
 
   return (
     <div style={s.app}>
@@ -1396,7 +1400,7 @@ export default function MeetSlot() {
                           <button onClick={() => setActiveCell(null)} aria-label="접기" style={s.premiumCollapse}><img src="/icons/chevron-up.svg" width="18" height="18" alt="" /></button>
                         </div>
                         <div className="reco-headline-grad" style={s.premiumHeadlineBase}>{reasonHead}</div>
-                        <div style={s.premiumTime}>{fullDateLabel(dl)} · {slotRangeShort(p.start, p.end)}</div>
+                        <div style={premiumTimeC}>{fullDateLabel(dl)} · {slotRangeShort(p.start, p.end)}</div>
                         <div style={s.dSub}>
                           <span style={{ ...s.dSubDot, background: STATUS[tierStatus(p.tier)].solid }} />
                           <span style={s.dSubText}>{recoDesc(p)}</span>
@@ -1467,7 +1471,7 @@ export default function MeetSlot() {
                     <span style={{ ...s.dTagDot, background: CARD_TAG.unfit.dot }} />
                     {STATUS_LABEL.unfit}
                   </span>
-                  <div style={s.dTitle}>{fullDateLabel(dayLabel)} · {slotRangeLabel}</div>
+                  <div style={dTitleC}>{fullDateLabel(dayLabel)} · {slotRangeLabel}</div>
                   <div style={s.dSub}>
                     <span style={{ ...s.dSubDot, background: CARD_TAG.unfit.dot }} />
                     <span style={s.dSubText}>필수 참석자가 다른 일정과 겹쳐 잡을 수 없어요.</span>
@@ -1501,14 +1505,14 @@ export default function MeetSlot() {
                   <span style={{ ...s.dTagDot, background: CARD_TAG[activeDispStatus].dot }} />
                   {activeLabel}
                 </span>
-                <div style={s.dTitle}>{fullDateLabel(dayLabel)} · {slotRangeLabel}</div>
+                <div style={dTitleC}>{fullDateLabel(dayLabel)} · {slotRangeLabel}</div>
                 <div style={s.dSub}>
                   <span style={{ ...s.dSubDot, background: CARD_TAG[activeDispStatus].dot }} />
                   <span style={s.dSubText}>{(() => {
                     if (offHours) return OFF_HOURS_HINT;
                     if (active.status !== "check") return STATUS_HINT[active.status];
                     const focusIds = options.relaxPref ? [] : [...new Set([...active.prefConflicts, ...active.fieldwork])];
-                    if (focusIds.length) return `${focusIds.map(nameOf).join(", ")}님의 확인이 필요한 시간입니다. 확정 전 한 번 확인해 보세요.`;
+                    if (focusIds.length) return `${focusIds.map(nameOf).join(", ")}님의 확인이 필요한 시간입니다.\n확정 전 한 번 확인해 보세요.`;
                     if (active.busyOptional.length) return `${active.busyOptional.map(nameOf).join(", ")}님은 다른 일정이 있어 못 올 수 있어요.`;
                     return STATUS_HINT.check;
                   })()}</span>
@@ -2022,7 +2026,7 @@ const s = {
   dTitle: { fontSize: 17, fontWeight: 800, lineHeight: "24px", letterSpacing: -0.34, color: "#191F28" },
   dSub: { display: "flex", gap: 6, alignItems: "flex-start", width: "100%" },
   dSubDot: { width: 6, height: 6, borderRadius: 3, flexShrink: 0, marginTop: 6 },
-  dSubText: { fontSize: 13, fontWeight: 500, lineHeight: "20px", letterSpacing: -0.26, color: "#4E5968", wordBreak: "keep-all" },
+  dSubText: { fontSize: 13, fontWeight: 500, lineHeight: "20px", letterSpacing: -0.26, color: "#4E5968", wordBreak: "keep-all", whiteSpace: "pre-line" },
   dDivider: { height: 1, background: "#F2F4F6", width: "100%" },
   dRows: { display: "flex", flexDirection: "column", gap: 6, width: "100%" },
   kvRow: { display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", gap: 10 },
