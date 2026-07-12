@@ -1181,7 +1181,7 @@ export default function MeetSlot() {
                       const top = ((b.start - DAY_START) / SLOT) * SLOT_PX;
                       const height = ((b.end - b.start) / SLOT) * SLOT_PX;
                       return (
-                        <div key={"r" + i} style={{ position: "absolute", left: 3, right: 3, top: top + 1.5, height: height - 3, background: T.blueBgSoft, borderRadius: 7, zIndex: 1, pointerEvents: "none" }} />
+                        <div key={"r" + i} style={{ position: "absolute", left: 3, right: 3, top: top + 1.5, height: height - 3, background: "rgba(147, 194, 255, 0.05)", borderRadius: 7, zIndex: 1, pointerEvents: "none" }} />
                       );
                     })}
                     {/* hover 프리뷰 (회의 길이만큼) — 가능 블록 위에서 구분되게 한 톤 진한 파랑 */}
