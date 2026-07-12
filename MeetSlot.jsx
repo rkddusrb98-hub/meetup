@@ -1175,9 +1175,13 @@ export default function MeetSlot() {
                     onMouseMove={(e) => { const st = hoverSlotAt(d, e.clientY, e.currentTarget); setHoverCell(st != null ? { col: di, day: d.key, start: st } : null); }}
                     onMouseLeave={() => setHoverCell((h) => (h && h.col === di ? null : h))}
                     onClick={() => { if (hoverCell && hoverCell.col === di) openCell(`${di}-${hoverCell.start}`); }}>
-                    {/* 근무시간 밖 hover 프리뷰 (연한 회색, 회의 길이만큼) */}
+                    {/* 근무시간(9~18) 가능 존 — 빈 곳이 '가능'임을 옅은 파랑으로 인지시킴(색·일정 블록이 위를 덮음) */}
+                    {!d.isPast && (
+                      <div style={{ position: "absolute", left: 3, right: 3, top: ((BIZ_START - DAY_START) / SLOT) * SLOT_PX + 1.5, height: ((BIZ_END - BIZ_START) / SLOT) * SLOT_PX - 3, background: T.blueBgSoft, borderRadius: 7, pointerEvents: "none", zIndex: 0 }} />
+                    )}
+                    {/* hover 프리뷰 (회의 길이만큼) — 가능 존 위에서 살짝 더 진한 파랑 */}
                     {hoverCell && hoverCell.col === di && (
-                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: T.blueBgSoft, borderRadius: 7, pointerEvents: "none", zIndex: 1 }} />
+                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: T.blueBg, borderRadius: 7, pointerEvents: "none", zIndex: 1 }} />
                     )}
                     {/* 기존 일정 블록 (회색, 시간대별 요약) — 후보 블록과 겹치는 건 제외 */}
                     {shownEvBlocks.map((b, i) => {
