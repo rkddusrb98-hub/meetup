@@ -1124,7 +1124,7 @@ export default function MeetSlot() {
           <div style={s.legendTop}>
             {["ready", "check", "adjust", "unfit"].map((k) => (
               <span key={k} style={s.legendItem}>
-                <span style={{ ...s.legendDot, background: k === "ready" ? T.blueBgSoft : k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
+                <span style={{ ...s.legendDot, background: k === "unfit" ? T.gray100 : STATUS[k].bg, border: `1.5px solid ${k === "unfit" ? T.gray200 : STATUS[k].border}` }} />
                 {STATUS_LABEL[k]}
               </span>
             ))}
@@ -1181,12 +1181,12 @@ export default function MeetSlot() {
                       const top = ((b.start - DAY_START) / SLOT) * SLOT_PX;
                       const height = ((b.end - b.start) / SLOT) * SLOT_PX;
                       return (
-                        <div key={"r" + i} style={{ position: "absolute", left: 3, right: 3, top: top + 1.5, height: height - 3, background: "rgba(147, 194, 255, 0.05)", borderRadius: 7, zIndex: 1, pointerEvents: "none" }} />
+                        <div key={"r" + i} style={{ position: "absolute", left: 3, right: 3, top: top + 1.5, height: height - 3, background: T.blueBg, borderRadius: 7, zIndex: 1, pointerEvents: "none" }} />
                       );
                     })}
                     {/* hover 프리뷰 (회의 길이만큼) — 가능 블록 위에서 구분되게 한 톤 진한 파랑 */}
                     {hoverCell && hoverCell.col === di && (
-                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: (hoverCell.start >= BIZ_START && hoverCell.start + durMin <= BIZ_END) ? "rgba(147, 194, 255, 0.45)" : "rgba(178, 184, 193, 0.35)", borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
+                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: (hoverCell.start >= BIZ_START && hoverCell.start + durMin <= BIZ_END) ? "rgba(147, 194, 255, 0.5)" : "rgba(178, 184, 193, 0.5)", borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
                     )}
                     {/* 기존 일정 블록 (회색, 시간대별 요약) — 후보 블록과 겹치는 건 제외 */}
                     {shownEvBlocks.map((b, i) => {
