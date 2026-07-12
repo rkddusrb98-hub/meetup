@@ -1186,7 +1186,7 @@ export default function MeetSlot() {
                     })}
                     {/* hover 프리뷰 (회의 길이만큼) — 가능 블록 위에서 구분되게 한 톤 진한 파랑 */}
                     {hoverCell && hoverCell.col === di && (
-                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: (hoverCell.start >= BIZ_START && hoverCell.start + durMin <= BIZ_END) ? "#C9E2FF" : T.gray100, borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
+                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: (hoverCell.start >= BIZ_START && hoverCell.start + durMin <= BIZ_END) ? "rgba(147, 194, 255, 0.45)" : "rgba(178, 184, 193, 0.35)", borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
                     )}
                     {/* 기존 일정 블록 (회색, 시간대별 요약) — 후보 블록과 겹치는 건 제외 */}
                     {shownEvBlocks.map((b, i) => {
@@ -2009,7 +2009,7 @@ const s = {
   dTitle: { fontSize: 17, fontWeight: 800, lineHeight: "24px", letterSpacing: -0.34, color: "#191F28" },
   dSub: { display: "flex", gap: 6, alignItems: "flex-start", width: "100%" },
   dSubDot: { width: 6, height: 6, borderRadius: 3, flexShrink: 0, marginTop: 6 },
-  dSubText: { fontSize: 13, fontWeight: 500, lineHeight: "18px", letterSpacing: -0.26, color: "#4E5968", wordBreak: "keep-all" },
+  dSubText: { fontSize: 13, fontWeight: 500, lineHeight: "20px", letterSpacing: -0.26, color: "#4E5968", wordBreak: "keep-all" },
   dDivider: { height: 1, background: "#F2F4F6", width: "100%" },
   dRows: { display: "flex", flexDirection: "column", gap: 6, width: "100%" },
   kvRow: { display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", gap: 10 },
