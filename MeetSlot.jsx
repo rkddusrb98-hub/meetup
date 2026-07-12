@@ -605,6 +605,7 @@ export default function MeetSlot() {
   const [recoLoading, setRecoLoading] = useState(false); // 추천 계산 로딩(연출)
   const [pickedRoom, setPickedRoom] = useState(null);
   const [rightW, setRightW] = useState(340); // 오른쪽 패널 폭(px) — 드래그로 조절
+  const [navDir, setNavDir] = useState(null); // 오른쪽 패널 뷰 전환 방향: "fwd"(다음) | "back"(뒤로)
   const [options, setOptions] = useState({ relaxPref: false, online: false });
   const [confirmed, setConfirmed] = useState(null);
   const [tipOpen, setTipOpen] = useState(false); // 필수/선택 안내 툴팁 (클릭 토글)
@@ -838,7 +839,7 @@ export default function MeetSlot() {
   }, [recoSigNow]);
 
   // "다음" → 회의 정보 입력 단계로 (그 순간의 참석자까지 스냅샷으로 고정)
-  function goToInfoStep(payload) { setPendingConfirm({ ...payload, attendees: participants.map((p) => nameOf(p.id)).join(", ") }); }
+  function goToInfoStep(payload) { setNavDir("fwd"); setPendingConfirm({ ...payload, attendees: participants.map((p) => nameOf(p.id)).join(", ") }); }
   // 물어보기용 메시지 초안 (회의 정보 + 정중한 톤). 수정 가능.
   function buildAskText() {
     if (!dayLabel || aSlot == null) return "";
@@ -902,7 +903,7 @@ export default function MeetSlot() {
     const hasEvents = eventsInCell(participants, dayObj.key, Number(h)).length > 0;
     // 완전 빈 불가 칸(보여줄 게 없음)만 막고, 일정이 있어 막힌 칸은 열어서 사유를 보여준다.
     if (ev.status === "unfit" && !hasEvents) return;
-    setActiveCell(key); setPickedRoom(null); setConfirmed(null); setFromReco(false); setPendingConfirm(null);
+    setNavDir(null); setActiveCell(key); setPickedRoom(null); setConfirmed(null); setFromReco(false); setPendingConfirm(null);
   }
   // "일정 추천 받기" → 로딩 연출 후 1순위 추천이 프리미엄 카드로 나타남 + 캘린더 스크롤
   function runRecos() {
@@ -1288,7 +1289,10 @@ export default function MeetSlot() {
         <div style={s.rightWrap}>
         <aside ref={rightRef} className="mss mss-noscroll" style={s.right} onScroll={updateRThumb} onAnimationEnd={updateRThumb}>
 
-          {/* 확정 → 추천계산 로딩 → 카드(추천/가능) → 빈 상태 */}
+          {/* 확정 → 추천계산 로딩 → 카드(추천/가능) → 빈 상태. 뷰(상세↔정보입력↔확정) 전환 시 좌우 슬라이드 */}
+          <div key={confirmed ? "confirmed" : pendingConfirm ? "info" : "detail"}
+            className={navDir === "fwd" ? "panel-fwd" : navDir === "back" ? "panel-back" : ""}
+            style={{ display: "flex", flexDirection: "column", gap: 10, minWidth: 0 }}>
           {confirmed ? (
             <div style={{ ...s.confirmBox, paddingTop: 30 }}>
               <div style={s.confirmHead}>
@@ -1331,7 +1335,7 @@ export default function MeetSlot() {
             <div style={{ ...s.confirmBox, gap: 24 }}>
               <div style={s.infoTop}>
                 <div style={s.infoHead}>
-                  <button onClick={() => setPendingConfirm(null)} aria-label="뒤로" style={s.infoBack}><img src="/icons/cal-prev.svg" width="20" height="20" alt="" /></button>
+                  <button onClick={() => { setNavDir("back"); setPendingConfirm(null); }} aria-label="뒤로" style={s.infoBack}><img src="/icons/cal-prev.svg" width="20" height="20" alt="" /></button>
                   <span style={s.infoHeadTitle}>회의 정보 입력</span>
                 </div>
                 <div style={s.infoSummary}>
@@ -1629,6 +1633,7 @@ export default function MeetSlot() {
               </div>
             </>
           )}
+          </div>
 
         </aside>
         <div style={{ ...s.rightThumb, top: rThumb.top, height: rThumb.h, opacity: rThumb.show ? 1 : 0 }} />
@@ -1833,6 +1838,10 @@ button:focus-visible:not(.field) { outline: 2px solid ${T.blue}; outline-offset:
 .rz-handle { position: absolute; top: 0; bottom: 0; width: 9px; cursor: url('/cursors/resize.svg') 15 9, col-resize; z-index: 40; display: flex; align-items: center; justify-content: center; }
 .rz-handle::before { content: ""; width: 3px; height: 46px; border-radius: 3px; background: transparent; transition: background .15s ease; }
 .rz-handle:hover::before { background: #A6BEE0; }
+@keyframes panelSlideFwd { from { opacity: 0; transform: translateX(42px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes panelSlideBack { from { opacity: 0; transform: translateX(-42px); } to { opacity: 1; transform: translateX(0); } }
+.panel-fwd { animation: panelSlideFwd .3s cubic-bezier(0.22,1,0.36,1); }
+.panel-back { animation: panelSlideBack .3s cubic-bezier(0.22,1,0.36,1); }
 .info-tip { position: relative; display: inline-flex; align-items: center; margin-left: -1px; }
 .info-tip img { display: block; cursor: pointer; }
 .info-bubble { white-space: nowrap; background: #fff; color: #4E5968; font-size: 12px; font-weight: 600; letter-spacing: -0.24px; line-height: 15px; padding: 9px 14px; border-radius: 10px; box-shadow: 0 4px 20px rgba(176,184,193,0.34); z-index: 60; }
@@ -1961,7 +1970,7 @@ const s = {
 
   rightWrap: { position: "relative", minHeight: 0, display: "flex", flexDirection: "column" },
   rightThumb: { position: "absolute", right: 3, width: 6, borderRadius: 3, background: "rgba(96,105,120,0.4)", pointerEvents: "none", transition: "opacity .35s ease", zIndex: 6 },
-  right: { flex: 1, minHeight: 0, borderLeft: `1px solid ${T.gray100}`, padding: 18, overflowY: "auto", background: T.gray100, display: "flex", flexDirection: "column", gap: 10 },
+  right: { flex: 1, minHeight: 0, borderLeft: `1px solid ${T.gray100}`, padding: 18, overflowY: "auto", overflowX: "hidden", background: T.gray100, display: "flex", flexDirection: "column", gap: 10 },
   diagBox: { borderRadius: 18, padding: 18 },
   diagTop: { display: "flex", alignItems: "center", gap: 12, marginBottom: 14 },
   diagBig: { fontSize: 46, fontWeight: 800, lineHeight: 0.9, letterSpacing: -2 },
