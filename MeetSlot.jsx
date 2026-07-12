@@ -1512,7 +1512,7 @@ export default function MeetSlot() {
                     if (offHours) return OFF_HOURS_HINT;
                     if (active.status !== "check") return STATUS_HINT[active.status];
                     const focusIds = options.relaxPref ? [] : [...new Set([...active.prefConflicts, ...active.fieldwork])];
-                    if (focusIds.length) return `${focusIds.map(nameOf).join(", ")}님의 확인이 필요한 시간입니다.\n확정 전 한 번 확인해 보세요.`;
+                    if (focusIds.length) return `${focusIds.map(nameOf).join(", ")}님의 확인이 필요한 시간입니다. 확정 전 한 번 확인해 보세요.`;
                     if (active.busyOptional.length) return `${active.busyOptional.map(nameOf).join(", ")}님은 다른 일정이 있어 못 올 수 있어요.`;
                     return STATUS_HINT.check;
                   })()}</span>
@@ -2026,7 +2026,7 @@ const s = {
   dTitle: { fontSize: 17, fontWeight: 800, lineHeight: "24px", letterSpacing: -0.34, color: "#191F28" },
   dSub: { display: "flex", gap: 6, alignItems: "flex-start", width: "100%" },
   dSubDot: { width: 6, height: 6, borderRadius: 3, flexShrink: 0, marginTop: 6 },
-  dSubText: { fontSize: 13, fontWeight: 500, lineHeight: "20px", letterSpacing: -0.26, color: "#4E5968", wordBreak: "keep-all", whiteSpace: "pre-line" },
+  dSubText: { fontSize: 13, fontWeight: 500, lineHeight: "20px", letterSpacing: -0.26, color: "#4E5968", wordBreak: "keep-all" },
   dDivider: { height: 1, background: "#F2F4F6", width: "100%" },
   dRows: { display: "flex", flexDirection: "column", gap: 6, width: "100%" },
   kvRow: { display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", gap: 10 },
