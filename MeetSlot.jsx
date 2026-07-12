@@ -549,10 +549,10 @@ function recoDesc(p) {
 function tierStatus(tier) { return tier === 1 ? "ready" : tier === 3 ? "adjust" : "check"; }
 const COUNT_BUN = ["", "한 분", "두 분", "세 분", "네 분", "다섯 분", "여섯 분", "일곱 분", "여덟 분"];
 const STATUS_HINT = {
-  ready: "지금 바로 확정할 수 있어요",
-  check: "확인이 필요한 참석자가 있어요",
-  adjust: "온라인으로 전환하면 잡을 수 있어요",
-  unfit: "필수 참석자가 다른 일정과 겹쳐 잡을 수 없어요",
+  ready: "지금 바로 확정할 수 있어요.",
+  check: "확인이 필요한 참석자가 있어요.",
+  adjust: "온라인으로 전환하면 잡을 수 있어요.",
+  unfit: "필수 참석자가 다른 일정과 겹쳐 잡을 수 없어요.",
 };
 const AVATAR_COLORS = ["#FFE2E5", "#E3F0FF", "#E5F8EE", "#FFF1D6", "#EFE7FF", "#DDF4F4", "#FFE8D6", "#E8EAF6"];
 function avatarColor(id) {
@@ -813,7 +813,7 @@ export default function MeetSlot() {
   const offHours = active != null && aSlot != null && !activeInBiz && active.status !== "unfit";
   const activeDispStatus = active ? (offHours ? "check" : active.status) : null;
   const activeLabel = active ? STATUS_LABEL[activeDispStatus] : "";
-  const OFF_HOURS_HINT = "근무 시간이 아니에요. 확인 후 잡는 걸 추천드려요";
+  const OFF_HOURS_HINT = "근무 시간이 아니에요. 확인 후 잡는 걸 추천드려요.";
   // 회의 구간 표시 문자열. 단, 기존 일정(불가) 블록을 누른 경우엔 그 일정의 실제 시간대를 표시(블록 크기와 일치)
   const activeEvBlock = (active && active.status === "unfit" && aDay != null && aSlot != null)
     ? dayEventBlocks(participants, aDay).find((b) => b.start <= aSlot && aSlot < b.end)
@@ -1190,7 +1190,7 @@ export default function MeetSlot() {
                     })}
                     {/* hover 프리뷰 (회의 길이만큼) — 가능 블록 위에서 구분되게 한 톤 진한 파랑 */}
                     {hoverCell && hoverCell.col === di && (
-                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: "#C9E2FF", borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
+                      <div style={{ position: "absolute", left: 3, right: 3, top: ((hoverCell.start - DAY_START) / SLOT) * SLOT_PX + 1.5, height: (durMin / SLOT) * SLOT_PX - 3, background: (hoverCell.start >= BIZ_START && hoverCell.start + durMin <= BIZ_END) ? "#C9E2FF" : T.gray100, borderRadius: 7, pointerEvents: "none", zIndex: 2 }} />
                     )}
                     {/* 기존 일정 블록 (회색, 시간대별 요약) — 후보 블록과 겹치는 건 제외 */}
                     {shownEvBlocks.map((b, i) => {
@@ -1461,7 +1461,7 @@ export default function MeetSlot() {
                   <div style={s.dTitle}>{fullDateLabel(dayLabel)} · {slotRangeLabel}</div>
                   <div style={s.dSub}>
                     <span style={{ ...s.dSubDot, background: CARD_TAG.unfit.dot }} />
-                    <span style={s.dSubText}>필수 참석자가 다른 일정과 겹쳐 잡을 수 없어요</span>
+                    <span style={s.dSubText}>필수 참석자가 다른 일정과 겹쳐 잡을 수 없어요.</span>
                   </div>
                 </div>
                 <div style={s.dDivider} />
@@ -1499,8 +1499,8 @@ export default function MeetSlot() {
                     if (offHours) return OFF_HOURS_HINT;
                     if (active.status !== "check") return STATUS_HINT[active.status];
                     const focusIds = options.relaxPref ? [] : [...new Set([...active.prefConflicts, ...active.fieldwork])];
-                    if (focusIds.length) return `${focusIds.map(nameOf).join(", ")}님이 이 시간을 회의를 피하고 싶은 시간으로 설정했어요`;
-                    if (active.busyOptional.length) return `${active.busyOptional.map(nameOf).join(", ")}님은 다른 일정이 있어 못 올 수 있어요`;
+                    if (focusIds.length) return `${focusIds.map(nameOf).join(", ")}님의 확인이 필요한 시간입니다. 확정 전 한 번 확인해 보세요.`;
+                    if (active.busyOptional.length) return `${active.busyOptional.map(nameOf).join(", ")}님은 다른 일정이 있어 못 올 수 있어요.`;
                     return STATUS_HINT.check;
                   })()}</span>
                 </div>
@@ -1589,7 +1589,7 @@ export default function MeetSlot() {
                   <div style={s.dTitle}>잡을 수 있는 시간이 없어요</div>
                   <div style={s.dSub}>
                     <span style={{ ...s.dSubDot, background: CARD_TAG.unfit.dot }} />
-                    <span style={s.dSubText}>{deadEnd ? `이 기간엔 최대 ${deadEnd.freeCount}/${deadEnd.total}명만 맞아요${deadEnd.missing && deadEnd.missing.length ? ` · ${deadEnd.missing.slice(0, 3).map(nameOf).join(", ")}님이 계속 겹쳐요` : ""}` : "조건을 만족하는 빈 시간이 없어요"}</span>
+                    <span style={s.dSubText}>{deadEnd ? `이 기간엔 최대 ${deadEnd.freeCount}/${deadEnd.total}명만 맞아요${deadEnd.missing && deadEnd.missing.length ? ` · ${deadEnd.missing.slice(0, 3).map(nameOf).join(", ")}님이 계속 겹쳐요` : ""}.` : "조건을 만족하는 빈 시간이 없어요."}</span>
                   </div>
                 </div>
                 <div style={s.dDivider} />
