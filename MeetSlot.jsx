@@ -589,15 +589,14 @@ const Icon = {
 };
 
 export default function MeetSlot() {
-  // 새로고침해도 화면 상태 유지: localStorage에서 복원
-  const savedRef = useRef(null);
-  if (savedRef.current === null) { try { savedRef.current = JSON.parse(localStorage.getItem("meetup-v2") || "{}"); } catch (e) { savedRef.current = {}; } }
-  const SV = savedRef.current;
   const [title, setTitle] = useState("");
-  const [selected, setSelected] = useState(SV.selected ?? [{ id: "me", required: true }]);
+  const [selected, setSelected] = useState([
+    // 처음 진입 시 나만 선택된 상태로 시작
+    { id: "me", required: true },
+  ]);
   const [search, setSearch] = useState("");
-  const [deptFilter, setDeptFilter] = useState(SV.deptFilter ?? []); // 선택된 직군들(빈 배열=전체)
-  const [durMin, setDurMin] = useState(SV.durMin ?? 60); // 회의 길이(분), 기본 1시간
+  const [deptFilter, setDeptFilter] = useState([]); // 선택된 직군들(빈 배열=전체)
+  const [durMin, setDurMin] = useState(60); // 회의 길이(분), 기본 1시간
   const [activeCell, setActiveCell] = useState(null); // "컬럼인덱스-시작분" (예: "0-600")
   const [hoverCell, setHoverCell] = useState(null); // 근무시간 밖 hover 프리뷰 { col, day, start }
   const [recos, setRecos] = useState(null); // "추천 시간 찾기" 결과 (계산 전엔 null)
@@ -605,9 +604,9 @@ export default function MeetSlot() {
   const [fromReco, setFromReco] = useState(false); // 현재 선택이 추천 결과에서 온 것인지(=추천) vs 수동 hover(=가능)
   const [recoLoading, setRecoLoading] = useState(false); // 추천 계산 로딩(연출)
   const [pickedRoom, setPickedRoom] = useState(null);
-  const [rightW, setRightW] = useState(SV.rightW ?? 340); // 오른쪽 패널 폭(px) — 드래그로 조절
+  const [rightW, setRightW] = useState(340); // 오른쪽 패널 폭(px) — 드래그로 조절
   const [navDir, setNavDir] = useState(null); // 오른쪽 패널 뷰 전환 방향: "fwd"(다음) | "back"(뒤로)
-  const [options, setOptions] = useState(SV.options ?? { relaxPref: false, online: false });
+  const [options, setOptions] = useState({ relaxPref: false, online: false });
   const [confirmed, setConfirmed] = useState(null);
   const [tipOpen, setTipOpen] = useState(false); // 필수/선택 안내 툴팁 (클릭 토글)
   const [tipPos, setTipPos] = useState({ cx: 0, bottom: 0 });
@@ -648,8 +647,8 @@ export default function MeetSlot() {
   const [files, setFiles] = useState([]); // 첨부 파일명(목업)
   const [showAdjustAll, setShowAdjustAll] = useState(false);
   // 날짜 선택: 단일(당일) 또는 기간. rangeEnd=null이면 당일. 처음엔 7/20~24(월~금) 선택.
-  const [rangeStart, setRangeStart] = useState(SV.rangeStart != null ? new Date(SV.rangeStart) : new Date(2026, 6, 20));
-  const [rangeEnd, setRangeEnd] = useState(SV.rangeStart != null ? (SV.rangeEnd != null ? new Date(SV.rangeEnd) : null) : new Date(2026, 6, 24));
+  const [rangeStart, setRangeStart] = useState(new Date(2026, 6, 20));
+  const [rangeEnd, setRangeEnd] = useState(new Date(2026, 6, 24));
   const [draft, setDraft] = useState({ start: null, end: null }); // 피커에서 확인 전 임시 선택
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerMonth, setPickerMonth] = useState(new Date(TODAY.getFullYear(), TODAY.getMonth(), 1));
@@ -698,16 +697,6 @@ export default function MeetSlot() {
   const titleRef = useRef(null);
   const recoTimerRef = useRef(null); // 추천 로딩 setTimeout id (조건 변경 시 취소용)
   const [titleWarn, setTitleWarn] = useState(false);
-  // 상태 변경 시 localStorage에 저장(새로고침 유지)
-  useEffect(() => {
-    try {
-      localStorage.setItem("meetup-v2", JSON.stringify({
-        selected, deptFilter, durMin, rightW, options,
-        rangeStart: rangeStart ? rangeStart.getTime() : null,
-        rangeEnd: rangeEnd ? rangeEnd.getTime() : null,
-      }));
-    } catch (e) {}
-  }, [selected, deptFilter, durMin, rightW, options, rangeStart, rangeEnd]);
   useEffect(() => {
     const wrap = calScrollRef.current;
     if (!wrap) return;
