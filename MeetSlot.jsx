@@ -591,24 +591,24 @@ const Icon = {
 export default function MeetSlot() {
   // 새로고침해도 화면 상태 유지: localStorage에서 복원
   const savedRef = useRef(null);
-  if (savedRef.current === null) { try { savedRef.current = JSON.parse(localStorage.getItem("meetup-v1") || "{}"); } catch (e) { savedRef.current = {}; } }
+  if (savedRef.current === null) { try { savedRef.current = JSON.parse(localStorage.getItem("meetup-v2") || "{}"); } catch (e) { savedRef.current = {}; } }
   const SV = savedRef.current;
-  const [title, setTitle] = useState(SV.title ?? "");
+  const [title, setTitle] = useState("");
   const [selected, setSelected] = useState(SV.selected ?? [{ id: "me", required: true }]);
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState(SV.deptFilter ?? []); // 선택된 직군들(빈 배열=전체)
   const [durMin, setDurMin] = useState(SV.durMin ?? 60); // 회의 길이(분), 기본 1시간
-  const [activeCell, setActiveCell] = useState(SV.activeCell ?? null); // "컬럼인덱스-시작분" (예: "0-600")
+  const [activeCell, setActiveCell] = useState(null); // "컬럼인덱스-시작분" (예: "0-600")
   const [hoverCell, setHoverCell] = useState(null); // 근무시간 밖 hover 프리뷰 { col, day, start }
-  const [recos, setRecos] = useState(SV.recos ?? null); // "추천 시간 찾기" 결과 (계산 전엔 null)
-  const [recoSig, setRecoSig] = useState(SV.recoSig ?? null); // 계산 당시 조건 서명 (변경 감지용)
-  const [fromReco, setFromReco] = useState(SV.fromReco ?? false); // 현재 선택이 추천 결과에서 온 것인지(=추천) vs 수동 hover(=가능)
+  const [recos, setRecos] = useState(null); // "추천 시간 찾기" 결과 (계산 전엔 null)
+  const [recoSig, setRecoSig] = useState(null); // 계산 당시 조건 서명 (변경 감지용)
+  const [fromReco, setFromReco] = useState(false); // 현재 선택이 추천 결과에서 온 것인지(=추천) vs 수동 hover(=가능)
   const [recoLoading, setRecoLoading] = useState(false); // 추천 계산 로딩(연출)
-  const [pickedRoom, setPickedRoom] = useState(SV.pickedRoom ?? null);
+  const [pickedRoom, setPickedRoom] = useState(null);
   const [rightW, setRightW] = useState(SV.rightW ?? 340); // 오른쪽 패널 폭(px) — 드래그로 조절
   const [navDir, setNavDir] = useState(null); // 오른쪽 패널 뷰 전환 방향: "fwd"(다음) | "back"(뒤로)
   const [options, setOptions] = useState(SV.options ?? { relaxPref: false, online: false });
-  const [confirmed, setConfirmed] = useState(SV.confirmed ?? null);
+  const [confirmed, setConfirmed] = useState(null);
   const [tipOpen, setTipOpen] = useState(false); // 필수/선택 안내 툴팁 (클릭 토글)
   const [tipPos, setTipPos] = useState({ cx: 0, bottom: 0 });
   // 오른쪽 패널 왼쪽 경계 드래그 → 폭 조절 (300~560px)
@@ -643,9 +643,9 @@ export default function MeetSlot() {
       window.removeEventListener("resize", close);
     };
   }, [tipOpen]);
-  const [pendingConfirm, setPendingConfirm] = useState(SV.pendingConfirm ?? null); // "다음" → 회의 정보 입력 단계
-  const [memo, setMemo] = useState(SV.memo ?? "");
-  const [files, setFiles] = useState(SV.files ?? []); // 첨부 파일명(목업)
+  const [pendingConfirm, setPendingConfirm] = useState(null); // "다음" → 회의 정보 입력 단계
+  const [memo, setMemo] = useState("");
+  const [files, setFiles] = useState([]); // 첨부 파일명(목업)
   const [showAdjustAll, setShowAdjustAll] = useState(false);
   // 날짜 선택: 단일(당일) 또는 기간. rangeEnd=null이면 당일. 처음엔 7/20~24(월~금) 선택.
   const [rangeStart, setRangeStart] = useState(SV.rangeStart != null ? new Date(SV.rangeStart) : new Date(2026, 6, 20));
@@ -701,13 +701,13 @@ export default function MeetSlot() {
   // 상태 변경 시 localStorage에 저장(새로고침 유지)
   useEffect(() => {
     try {
-      localStorage.setItem("meetup-v1", JSON.stringify({
-        title, selected, deptFilter, durMin, activeCell, recos, recoSig, fromReco, pickedRoom, rightW, options, confirmed, pendingConfirm, memo, files,
+      localStorage.setItem("meetup-v2", JSON.stringify({
+        selected, deptFilter, durMin, rightW, options,
         rangeStart: rangeStart ? rangeStart.getTime() : null,
         rangeEnd: rangeEnd ? rangeEnd.getTime() : null,
       }));
     } catch (e) {}
-  }, [title, selected, deptFilter, durMin, activeCell, recos, recoSig, fromReco, pickedRoom, rightW, options, confirmed, pendingConfirm, memo, files, rangeStart, rangeEnd]);
+  }, [selected, deptFilter, durMin, rightW, options, rangeStart, rangeEnd]);
   useEffect(() => {
     const wrap = calScrollRef.current;
     if (!wrap) return;
